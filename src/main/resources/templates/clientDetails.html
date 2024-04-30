@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bank client details</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<h1>Bank client details</h1>
+
+<script th:inline="javascript">
+    var clientId = /*[[${client.id}]]*/;
+</script>
+
+<script>
+    var selectedAccountNumber;
+
+    function addAccount(clientId) {
+        var accountNumber = generateAccountNumber();
+        var username= 'Administrator';
+        var password= 'password';
+        var requestBody = {
+            clientId: clientId,
+            accountNumber: accountNumber
+        };
+
+        var queryParams =  new URLSearchParams();
+        queryParams.append('username', username);
+        queryParams.append('password', password);
+
+        fetch('/bank/account/' + accountNumber + '/client/' + clientId + '?' + queryParams, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Invalid credentials');
+            }
+            return response.text();
+        })
+        .then(data => {
+            location.reload();
+            alert('The account has been added successfully.');
+        })
+        .catch(error => {
+            console.error('Error adding account: ', error);
+            alert('An error occurred while adding the account.');
+        });
+    }
+
+    function removeAccount(clientId) {
+     fetch('/bank/client/' + clientId, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Invalid credentials');
+            }
+            return response.text();
+        })
+        .then(data => {
+            alert('The account has been delete successfully.');
+        })
+        .catch(error => {
+            console.error('Error delete account: ', error);
+            alert('You must first transfer this client\'s money');
+        });
+    }
+
+    function deleteAccount(button) {
+        var accountNumber = button.dataset.accountNumber;
+        fetch('/bank/client/' + clientId+ '/account/'+ accountNumber, {
+            method: 'DELETE'
+        })
+        .then(response => {
+        if (!response.ok) {
+            throw new Error('Failed to delete account: ' + response.status + ' ' + response.statusText);
+        }
+        return response.text();
+        })
+        .then(data => {
+            alert('The account has been delete successfully.');
+        })
+        .catch(error => {
+            console.error('Error delete account: ', error.message);
+            alert('An error occurred while deleting the account: ' + error.message);
+        });
+
+    }
+
+    function withdrawMoney(clientId) {
+        var sum = document.getElementById("withdrawAmount-" + selectedAccountNumber).value;
+        fetch('/bank/client/' + clientId + '/sum/' + sum + '?accountNumber=' + encodeURIComponent(selectedAccountNumber), {
+            method: 'POST'
+        })
+        .then(response => {
+            if (response.ok) {
+                location.reload();
+                alert('Money withdrawn successfully.');
+            } else {
+                throw new Error('Failed to withdraw money.');
+            }
+        })
+        .catch(error => {
+            console.error('Error withdrawing money: ', error);
+            alert('An error occurred while withdrawing money.');
+        });
+    }
+
+    function depositMoney(clientId) {
+        var sum = document.getElementById("depositAmount-"+selectedAccountNumber).value;
+        fetch('/bank/client/' + clientId + '/sum/' + sum + '?accountNumber=' + encodeURIComponent(selectedAccountNumber), {
+            method: 'PUT'
+        })
+        .then(response => {
+            if (response.ok) {
+                location.reload();
+                alert('Money deposited successfully.');
+            } else {
+               response.json().then(errors => {
+                    let errorMessage = "";
+                    for (let error in errors) {
+                        errorMessage += errors[error] + '\n';
+                    }
+                    alert(errorMessage);
+                });
+           }
+        })
+        .catch(error => {
+            console.error('Error depositing money: ', error);
+            alert('An error occurred while depositing money.');
+        });
+    }
+
+    function generateAccountNumber() {
+        var min = 1000000000;
+        var max = 9999999999;
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+</script>
+
+
+<div>
+    <h2>Bank customer details:</h2>
+    <table>
+        <tr>
+            <th style="width: 273px;">ID:</th>
+            <td th:text="${client.id}"></td>
+        </tr>
+        <tr>
+            <th style="width: 273px;">Name:</th>
+            <td><span id="nameField" th:text="${client.name}" contenteditable="false"></span></td>
+        </tr>
+        <tr>
+            <th style="width: 273px;">Lastname:</th>
+            <td><span id="lastnameField" th:text="${client.lastname}" contenteditable="false"></span></td>
+        </tr>
+        <tr>
+            <th style="width: 273px;">PESEL:</th>
+            <td>
+                <span id="peselField" th:text="${client.pesel}" contenteditable="false"></span>
+                <span id="peselError" class="error"></span>
+            </td>
+        </tr>
+    </table>
+    <br><br>
+    <button onclick="enableEdit()">Change customer details</button>
+    <button id="saveButton" onclick="saveChanges()" style="display: none;">Save</button>
+</div>
+
+<div th:if="${client.accounts.size() > 0}">
+    <h2>Bank accounts:</h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Account number</th>
+            <th>Account balance</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="account : ${client.accounts}">
+            <td th:text="${account.accountNumber}"></td>
+            <td th:text="${account.balance}"></td>
+            <td>
+                <button onclick="makeTransfer(this)" th:attr="data-account-number=${account.accountNumber}">Make transfer</button>
+                <button onclick="showDepositForm(this)" th:attr="data-account-number=${account.accountNumber}">Deposit Money</button>
+                <div class="depositForm" th:attr="id='depositForm-' + ${account.accountNumber}" style="display:none;">
+                    <label th:attr="for='depositAmount-' + ${account.accountNumber}">Amount:</label><br>
+                    <input type="number" th:attr="id='depositAmount-' + ${account.accountNumber}" name="depositAmount" step="0.01"><br><br>
+                    <button onclick="depositMoney(clientId)">Deposit Now</button>
+                    <span id="amountError" class="error"></span><br>
+                </div>
+                <button onclick="showWithdrawForm(this)" th:attr="data-account-number=${account.accountNumber}">Withdraw Money</button>
+                <div class="withdrawForm" th:attr="id='withdrawForm-' + ${account.accountNumber}" style="display:none;">
+                    <label th:attr="for='withdrawAmount-' + ${account.accountNumber}">Amount:</label><br>
+                    <input type="number" th:attr="id='withdrawAmount-' + ${account.accountNumber}" name="withdrawAmount" step="0.01"><br><br>
+                    <button onclick="withdrawMoney(clientId)">Withdraw Now</button>
+                </div>
+                <button onclick="deleteAccount(this)" th:attr="data-account-number=${account.accountNumber}">Delete account</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:if="${client.accounts.size() == 0}">
+    <p>No bank accounts found for this client.</p>
+</div>
+
+
+    <h2>Operations:</h2>
+    <button onclick="addAccount(clientId)">Add a bank account</button>
+    <button onclick="removeAccount(clientId)">Delete bank account</button>
+    <button onclick="location.href='/bank/loanCalculator'">Calculate loan</button>
+
+<script>
+    function enableEdit() {
+        document.getElementById("nameField").contentEditable = true;
+        document.getElementById("lastnameField").contentEditable = true;
+        document.getElementById("peselField").contentEditable = true;
+        document.getElementById("saveButton").style.display = "block";
+    }
+
+    function saveChanges() {
+        var newName = document.getElementById("nameField").innerText;
+        var newLastname = document.getElementById("lastnameField").innerText;
+        var newPesel = document.getElementById("peselField").innerText;
+
+       if (!newPesel.match(/^\d{11}$/)) {
+        peselError.textContent = "PESEL must contain 11 digits.";
+        peselError.classList.add("error");
+        return;
+      } else {
+        peselError.textContent = "";
+        peselError.classList.remove("error");
+      }
+
+        // Send data to server-side endpoint for updating client details
+        fetch('/bank/client/' + clientId + '/update', {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: newName,
+                lastname: newLastname,
+                pesel: newPesel
+            })
+        })
+        .then(response => {
+            if (response.ok) {
+                // Update client details on the page
+                document.getElementById("nameField").textContent = newName;
+                document.getElementById("lastnameField").textContent = newLastname;
+                document.getElementById("peselField").textContent = newPesel;
+
+                // Disable editing after saving
+                document.getElementById("nameField").contentEditable = false;
+                document.getElementById("lastnameField").contentEditable = false;
+                document.getElementById("peselField").contentEditable = false;
+
+                alert('Customer details updated successfully.');
+            } else {
+                throw new Error('Failed to update customer details.');
+            }
+        })
+        .catch(error => {
+            console.error('Error updating customer details: ', error);
+            alert('An error occurred while updating customer details.');
+        });
+    }
+
+    function showWithdrawForm(button) {
+        selectedAccountNumber = button.dataset.accountNumber;
+        var withdrawForm = document.getElementById("withdrawForm-" + selectedAccountNumber);
+        withdrawForm.style.display = "block";
+    }
+</script>
+
+
+
+
+<script>
+    function showDepositForm(button) {
+        selectedAccountNumber = button.dataset.accountNumber;
+        var depositForm = document.getElementById("depositForm-" + selectedAccountNumber);
+        depositForm.style.display = "block";
+    }
+
+    function makeTransfer(button) {
+        var accountNumber = button.dataset.accountNumber;
+        var url = '/bank/transfer-form?senderAccountNumber=' + encodeURIComponent(accountNumber);
+        window.location.href = url;
+    }
+
+</script>
+
+</body>
+</html>

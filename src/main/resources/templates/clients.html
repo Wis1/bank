@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client list</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+<h1>Client list</h1>
+<table id="clientsTable">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Lastname</th>
+        <th>PESEL</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="client : ${clients}" onclick="showClientDetails(this)" th:data-client-id="${client.id}">
+        <td th:text="${client.id}"></td>
+        <td th:text="${client.name}"></td>
+        <td th:text="${client.lastname}"></td>
+        <td th:text="${client.pesel}"></td>
+    </tr>
+
+    </tbody>
+</table>
+<script>
+    function showClientDetails(row) {
+        var clientId = row.getAttribute('data-client-id');
+        window.location.href = '/bank/client/' + clientId;
+    }
+</script>
+</body>
+</html>

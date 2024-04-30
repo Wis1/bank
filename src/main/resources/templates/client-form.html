@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Add Client</title>
+  <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 25vh;
+            margin: 0;
+            background-image: url('/css/image.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.15); /* Przezroczystość dla tła */
+            z-index: -1; /* Ustawienie tła za treścią */
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            margin-top: 200px;
+        }
+
+        .menu-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        button {
+            margin-bottom: 10px;
+            width: 200px;
+        }
+         .error {
+            color: red !important;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+    </style>
+</head>
+<body>
+
+<form id="clientForm" method="post" action="/bank/client/new">
+  <h1>Add Client</h1>
+  <label for="name">Name:</label><br>
+  <input type="text" id="name" name="name"><br>
+  <span id="nameError" class="error"></span><br>
+  <label for="lastname">Lastname:</label><br>
+  <input type="text" id="lastname" name="lastname"><br>
+  <span id="lastnameError" class="error"></span><br>
+  <label for="pesel">PESEL:</label><br>
+  <input type="text" id="pesel" name="pesel" pattern="\d{11}" title="PESEL must contain 11 digits"><br><br>
+  <span id="peselError" class="error"></span><br>
+  <input type="submit" value="Save"><br><br>
+  <button onclick="location.href='/bank/client'">Display bank customers</button>
+</form>
+
+
+
+<script>
+document.getElementById("clientForm").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  var name = document.getElementById("name").value;
+  var lastname = document.getElementById("lastname").value;
+  var pesel = document.getElementById("pesel").value;
+  var peselError = document.getElementById("peselError");
+
+   if (!document.getElementById("pesel").checkValidity()) {
+        peselError.textContent = "PESEL must contain 11 digits.";
+        event.preventDefault();
+      } else {
+        peselError.textContent = "";
+      }
+
+  var clientData = {
+    "name": name,
+    "lastname": lastname,
+    "pesel": pesel
+  };
+
+  fetch("/bank/client/new", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(clientData)
+  })
+  .then(response => {
+    if (response.ok) {
+      alert("Client has been added successfully.");
+      document.getElementById("name").value = "";
+      document.getElementById("lastname").value = "";
+      document.getElementById("pesel").value = "";
+    } else {
+      response.json().then(errors => {
+        // Wyświetl komunikaty błędów obok odpowiednich pól formularza
+        if (errors.name) {
+          document.getElementById("nameError").textContent = errors.name;
+        } else {
+          document.getElementById("nameError").textContent = "";
+        }
+        if (errors.lastname) {
+          document.getElementById("lastnameError").textContent = errors.lastname;
+        } else {
+          document.getElementById("lastnameError").textContent = "";
+        }
+        if (errors.pesel) {
+          document.getElementById("peselError").textContent = errors.pesel;
+        } else {
+          document.getElementById("peselError").textContent = "";
+        }
+      });
+    }
+  })
+  .catch(error => {
+    console.error("Error:", error);
+  });
+});
+</script>
+</body>
+</html>

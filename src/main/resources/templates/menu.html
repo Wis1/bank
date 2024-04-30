@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 25vh;
+            margin: 0;
+            background-image: url('/css/image.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.15); /* Przezroczystość dla tła */
+            z-index: -1; /* Ustawienie tła za treścią */
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .menu-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        button {
+            margin-bottom: 10px;
+            width: 200px;
+        }
+
+    </style>
+</head>
+<body>
+<div class="menu-container">
+    <h1>Menu</h1>
+    <button onclick="location.href='/bank/client'">Display bank customers</button>
+    <button onclick="location.href='/bank/client-form'">Create client</button>
+    <button onclick="location.href='/bank/transfer-form'">Make a transfer</button>
+    <button onclick="location.href='/bank/loanCalculator'">Calculate loan</button>
+</div>
+</body>
+</html>

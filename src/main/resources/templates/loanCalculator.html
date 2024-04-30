@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Credit Calculator</title>
+  <link rel="stylesheet" href="/css/stylesloancalculator.css">
+</head>
+<body>
+<div class="container">
+  <h2 class="title">Credit Calculator</h2>
+  <form action="/bank/calculateLoan" method="post" class="form-container">
+    <label for="loanAmount">Credit amount:</label><br>
+    <input type="number" id="loanAmount" name="loanAmount" class="input-field" required><br>
+    <label for="loanTerm">Credit term (years):</label><br>
+    <input type="number" id="loanTerm" name="loanTerm" class="input-field" required><br>
+    <button type="submit" class="btn">Calculate credit</button>
+  </form>
+
+  <div id="result"></div>
+</div>
+</body>
+</html>

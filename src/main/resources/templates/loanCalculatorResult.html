@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <title>Loan Calculator Result</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      padding: 20px;
+    }
+
+    h2 {
+      color: #333;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+    }
+
+    th, td {
+      padding: 10px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    tr:hover {
+      background-color: #e2e2e2;
+    }
+  </style>
+</head>
+<body>
+<h2>Loan Schedule</h2>
+<table>
+  <thead>
+  <tr>
+    <th>Month</th>
+    <th>Monthly Payment</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr th:each="schedule : ${loanSchedule}">
+    <td th:text="${schedule.month}"></td>
+    <td th:text="${schedule.monthlyPayment}"></td>
+  </tr>
+  </tbody>
+</table>
+</body>
+</html>

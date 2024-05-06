@@ -29,7 +29,7 @@ public class JsonController {
 
     @InitBinder
     protected void initBinder(WebDataBinder binder) {
-       binder.setValidator(genericValidator);
+        binder.setValidator(genericValidator);
     }
 
     @PostMapping(value = "/client/new")
@@ -74,7 +74,7 @@ public class JsonController {
     }
 
     @PostMapping("/withdraw")
-    public ResponseEntity<?> withdraw(@Validated @RequestBody WithdrawForm withdrawForm, BindingResult bindingResult) {
+    public ResponseEntity<?> withdraw(@Validated @RequestBody WithdrawDepositForm withdrawForm, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body("Validation error: " + bindingResult.getAllErrors());
         } else {
@@ -88,8 +88,8 @@ public class JsonController {
     }
 
     @PutMapping("/deposit")
-    public ResponseEntity<?> depositMoney(@Validated @RequestBody WithdrawForm depositForm, BindingResult bindingResult) {
-        if(bindingResult.hasErrors()) {
+    public ResponseEntity<?> depositMoney(@Validated @RequestBody WithdrawDepositForm depositForm, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body("Validation error:" + bindingResult.getAllErrors());
         } else {
             try {
@@ -102,12 +102,16 @@ public class JsonController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerEmployee(@RequestBody EmployeeForm employeeForm) {
-        try {
-            employeeService.registerEmployee(employeeForm);
-            return ResponseEntity.ok("Employee registered successfully");
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+    public ResponseEntity<?> registerEmployee(@Validated @RequestBody EmployeeForm employeeForm, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body("Validation error:" + bindingResult.getAllErrors());
+        } else {
+            try {
+                employeeService.registerEmployee(employeeForm);
+                return ResponseEntity.ok("Employee registered successfully");
+            } catch (RuntimeException e) {
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
         }
     }
 

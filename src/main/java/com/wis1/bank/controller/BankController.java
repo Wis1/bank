@@ -71,7 +71,7 @@ public class BankController {
 
     @PostMapping("/client/{clientId}/sum/{sum}")
     public ResponseEntity<?> withdraw(@RequestParam String accountNumber, @PathVariable Long clientId, @PathVariable BigDecimal sum) {
-        WithdrawForm withdrawForm= new WithdrawForm(accountNumber, clientId, sum);
+        WithdrawDepositForm withdrawForm= new WithdrawDepositForm(accountNumber, clientId, sum);
         accountService.withdraw(withdrawForm);
         return ResponseEntity.ok("Withdrawal successful");
     }
@@ -82,7 +82,7 @@ public class BankController {
                                              @PathVariable @DecimalMin(value = "0.01", message = "Amount must be greater than 0")
                                              @Digits(integer = Integer.MAX_VALUE, fraction = 2, message = "Amount must have a maximum of two decimal places")
                                              BigDecimal sum) {
-        WithdrawForm depositForm= new WithdrawForm(accountNumber,clientId,sum);
+        WithdrawDepositForm depositForm= new WithdrawDepositForm(accountNumber,clientId,sum);
         clientService.depositMoney(depositForm);
         return ResponseEntity.ok().build();
     }

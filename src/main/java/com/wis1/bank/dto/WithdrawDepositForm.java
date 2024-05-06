@@ -9,7 +9,8 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class WithdrawForm {
+public class WithdrawDepositForm {
+
     private String accountNumber;
     private Long clientId;
     private BigDecimal sum;

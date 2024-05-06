@@ -10,8 +10,6 @@ import lombok.NoArgsConstructor;
 public class ClientForm {
 
     private String name;
-
     private String lastname;
-
     private String pesel;
 }

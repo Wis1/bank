@@ -7,15 +7,15 @@ import org.springframework.validation.Validator;
 import java.math.BigDecimal;
 
 @Component
-public class WithdrawFormValidator implements Validator {
+public class WithdrawDepositFormValidator implements Validator {
     @Override
     public boolean supports(Class<?> clazz) {
-        return WithdrawForm.class.equals(clazz);
+        return WithdrawDepositForm.class.equals(clazz);
     }
 
     @Override
     public void validate(Object target, Errors errors) {
-        WithdrawForm form= (WithdrawForm) target;
+        WithdrawDepositForm form= (WithdrawDepositForm) target;
         if (form.getAccountNumber()== null || form.getAccountNumber().isEmpty()) {
             errors.rejectValue("accountNumber", "accountNumber.required", "Account number is required");
         }

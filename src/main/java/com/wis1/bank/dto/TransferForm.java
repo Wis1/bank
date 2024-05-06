@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Getter
 public class TransferForm {
+
     private String senderAccountNumber;
     private String receiverAccountNumber;
     private BigDecimal amount;

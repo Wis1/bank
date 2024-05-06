@@ -1,7 +1,7 @@
 package com.wis1.bank.service;
 
 import com.wis1.bank.dto.TransferForm;
-import com.wis1.bank.dto.WithdrawForm;
+import com.wis1.bank.dto.WithdrawDepositForm;
 import com.wis1.bank.entity.Account;
 import com.wis1.bank.entity.Client;
 import com.wis1.bank.repository.AccountRepository;
@@ -69,7 +69,7 @@ public class AccountService {
         accountRepository.deleteByAccountNumber(accountNumber);
     }
 
-    public void withdraw(WithdrawForm form) {
+    public void withdraw(WithdrawDepositForm form) {
 
         Long clientId= form.getClientId();
         String accountNumber= form.getAccountNumber();

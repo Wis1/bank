@@ -1,7 +1,7 @@
 package com.wis1.bank.service;
 
-import com.wis1.bank.dto.TransferForm;
-import com.wis1.bank.dto.WithdrawDepositForm;
+import com.wis1.bank.dto.form.TransferForm;
+import com.wis1.bank.dto.form.WithdrawDepositForm;
 import com.wis1.bank.entity.Account;
 import com.wis1.bank.entity.Client;
 import com.wis1.bank.repository.AccountRepository;
@@ -50,6 +50,25 @@ public class AccountService {
                         .anyMatch(account -> account.getAccountNumber().equals(accountNumber)))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public void depositMoney(WithdrawDepositForm depositForm) {
+        Long clientId = depositForm.getClientId();
+        String accountNumber = depositForm.getAccountNumber();
+        BigDecimal sum = depositForm.getSum();
+
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new IllegalArgumentException("Client with id: " + clientId + " not exist."));
+
+        if (client.getAccounts().isEmpty()) {
+            throw new IllegalArgumentException("Client with id: " + clientId + " does not have any account.");
+        }
+
+        Account account = accountRepository.findByClientAndAccountNumber(client, accountNumber)
+                .orElseThrow(() -> new IllegalArgumentException("Client hasn't account with number: " + accountNumber));
+        BigDecimal newBalance = account.getBalance().add(sum);
+        account.setBalance(newBalance);
+        accountRepository.save(account);
     }
 
     private Account getAccountByNumber(Client client, String accountNumber) {

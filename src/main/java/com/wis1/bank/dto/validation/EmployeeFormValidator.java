@@ -1,5 +1,6 @@
-package com.wis1.bank.dto;
+package com.wis1.bank.dto.validation;
 
+import com.wis1.bank.dto.form.EmployeeForm;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;

@@ -87,7 +87,7 @@
             var formData = new FormData(document.getElementById("transferForm"));
             console.log(formData);
 
-            fetch('/bank/transfer', {
+            fetch('/account/transfer', {
                 method: 'POST',
                 body: formData
             })

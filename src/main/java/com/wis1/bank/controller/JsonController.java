@@ -1,6 +1,10 @@
 package com.wis1.bank.controller;
 
 import com.wis1.bank.dto.*;
+import com.wis1.bank.dto.form.ClientForm;
+import com.wis1.bank.dto.form.EmployeeForm;
+import com.wis1.bank.dto.form.TransferForm;
+import com.wis1.bank.dto.form.WithdrawDepositForm;
 import com.wis1.bank.entity.Employee;
 import com.wis1.bank.service.AccountService;
 import com.wis1.bank.service.ClientService;
@@ -93,7 +97,7 @@ public class JsonController {
             return ResponseEntity.badRequest().body("Validation error:" + bindingResult.getAllErrors());
         } else {
             try {
-                clientService.depositMoney(depositForm);
+                accountService.depositMoney(depositForm);
                 return ResponseEntity.ok().build();
             } catch (IllegalArgumentException | ConstraintViolationException e) {
                 return ResponseEntity.badRequest().body(e.getMessage());

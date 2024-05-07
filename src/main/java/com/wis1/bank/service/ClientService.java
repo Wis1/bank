@@ -2,11 +2,9 @@ package com.wis1.bank.service;
 
 import com.wis1.bank.dto.AccountDto;
 import com.wis1.bank.dto.ClientDto;
-import com.wis1.bank.dto.ClientForm;
-import com.wis1.bank.dto.WithdrawForm;
+import com.wis1.bank.dto.form.ClientForm;
 import com.wis1.bank.entity.Account;
 import com.wis1.bank.entity.Client;
-import com.wis1.bank.repository.AccountRepository;
 import com.wis1.bank.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +14,7 @@ import org.springframework.validation.FieldError;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -27,7 +22,6 @@ import java.util.stream.IntStream;
 public class ClientService {
 
     private final ClientRepository clientRepository;
-    private final AccountRepository accountRepository;
 
 
     public ResponseEntity<?> createClient(ClientForm clientForm) {
@@ -47,25 +41,6 @@ public class ClientService {
 
     public List<ClientDto> getAllClient() {
         return ClientMapper.mapToListClientDto(clientRepository.findAll());
-    }
-
-    public void depositMoney(WithdrawForm depositForm) {
-        Long clientId= depositForm.getClientId();
-        String accountNumber= depositForm.getAccountNumber();
-        BigDecimal sum= depositForm.getSum();
-
-        Client client = clientRepository.findById(clientId)
-                .orElseThrow(() -> new IllegalArgumentException("Client with id: " + clientId + " not exist."));
-
-        if (client.getAccounts().isEmpty()) {
-            throw new IllegalArgumentException("Client with id: " + clientId + " does not have any account.");
-        }
-
-        Account account = accountRepository.findByClientAndAccountNumber(client, accountNumber)
-                .orElseThrow(() -> new IllegalArgumentException("Client hasn't account with number: " + accountNumber));
-        BigDecimal newBalance = account.getBalance().add(sum);
-        account.setBalance(newBalance);
-        accountRepository.save(account);
     }
 
     public BigDecimal calculateLoan(double loanAmount, int loanTerm) {
@@ -102,13 +77,6 @@ public class ClientService {
         return IntStream.rangeClosed(1, loanTerm * 12)
                 .mapToObj(month -> new LoanSchedule(month, monthlyPayment))
                 .collect(Collectors.toList());
-
-//        List<LoanSchedule> loanSchedule = new ArrayList<>();
-//        for (int i=1; i<= loanTerm*12;i++) {
-//            BigDecimal monthlyPayment = calculateLoan(loanAmount, loanTerm).setScale(2,RoundingMode.HALF_DOWN);
-//            loanSchedule.add(new LoanSchedule(i, monthlyPayment));
-//        }
-//        return loanSchedule;
     }
 
     public void deleteClient(Long clientId) {

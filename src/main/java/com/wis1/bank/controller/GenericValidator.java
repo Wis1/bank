@@ -1,6 +1,13 @@
 package com.wis1.bank.controller;
 
-import com.wis1.bank.dto.*;
+import com.wis1.bank.dto.form.ClientForm;
+import com.wis1.bank.dto.form.EmployeeForm;
+import com.wis1.bank.dto.form.TransferForm;
+import com.wis1.bank.dto.form.WithdrawDepositForm;
+import com.wis1.bank.dto.validation.ClientFormValidator;
+import com.wis1.bank.dto.validation.EmployeeFormValidator;
+import com.wis1.bank.dto.validation.TransferFormValidator;
+import com.wis1.bank.dto.validation.WithdrawDepositFormValidator;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;

@@ -22,8 +22,8 @@ public class AppConfig {
     }
 
     @Bean
-    public ClientService clientService(ClientRepository clientRepository, AccountRepository accountRepository) {
-        return new ClientService(clientRepository, accountRepository);
+    public ClientService clientService(ClientRepository clientRepository) {
+        return new ClientService(clientRepository);
     }
 
     @Bean

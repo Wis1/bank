@@ -69,13 +69,13 @@
      function login(event) {
         event.preventDefault();
         var formData = new FormData(document.getElementById("loginForm"));
-        fetch('/bank/login', {
+        fetch('/employee/login', {
             method: 'POST',
             body: formData
         })
        .then(response => {
             if (response.ok) {
-                window.location.href = "http://localhost:8080/bank/menu";
+                window.location.href = "http://localhost:8080/employee/menu";
             } else {
                 return response.text();
             }

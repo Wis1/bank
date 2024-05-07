@@ -20,7 +20,6 @@ public class Account {
     private Long id;
     @Column
     private String accountNumber;
-
     @ManyToOne
     private Client client;
     @Column

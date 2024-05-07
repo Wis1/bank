@@ -1,4 +1,4 @@
-package com.wis1.bank.dto;
+package com.wis1.bank.dto.form;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,9 +7,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class ClientForm {
+public class EmployeeForm {
 
-    private String name;
-    private String lastname;
-    private String pesel;
+    private String username;
+    private String password;
 }

@@ -29,7 +29,7 @@
         queryParams.append('username', username);
         queryParams.append('password', password);
 
-        fetch('/bank/account/' + accountNumber + '/client/' + clientId + '?' + queryParams, {
+        fetch('/employee/account/' + accountNumber + '/client/' + clientId + '?' + queryParams, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -52,7 +52,7 @@
     }
 
     function removeAccount(clientId) {
-     fetch('/bank/client/' + clientId, {
+     fetch('/account/client/' + clientId, {
             method: 'DELETE'
         })
         .then(response => {
@@ -72,7 +72,7 @@
 
     function deleteAccount(button) {
         var accountNumber = button.dataset.accountNumber;
-        fetch('/bank/client/' + clientId+ '/account/'+ accountNumber, {
+        fetch('/account/client/' + clientId+ '/account/'+ accountNumber, {
             method: 'DELETE'
         })
         .then(response => {
@@ -93,7 +93,7 @@
 
     function withdrawMoney(clientId) {
         var sum = document.getElementById("withdrawAmount-" + selectedAccountNumber).value;
-        fetch('/bank/client/' + clientId + '/sum/' + sum + '?accountNumber=' + encodeURIComponent(selectedAccountNumber), {
+        fetch('/account/client/' + clientId + '/sum/' + sum + '?accountNumber=' + encodeURIComponent(selectedAccountNumber), {
             method: 'POST'
         })
         .then(response => {
@@ -112,7 +112,7 @@
 
     function depositMoney(clientId) {
         var sum = document.getElementById("depositAmount-"+selectedAccountNumber).value;
-        fetch('/bank/client/' + clientId + '/sum/' + sum + '?accountNumber=' + encodeURIComponent(selectedAccountNumber), {
+        fetch('/account/client/' + clientId + '/sum/' + sum + '?accountNumber=' + encodeURIComponent(selectedAccountNumber), {
             method: 'PUT'
         })
         .then(response => {
@@ -214,7 +214,7 @@
     <h2>Operations:</h2>
     <button onclick="addAccount(clientId)">Add a bank account</button>
     <button onclick="removeAccount(clientId)">Delete bank account</button>
-    <button onclick="location.href='/bank/loanCalculator'">Calculate loan</button>
+    <button onclick="location.href='/client/loanCalculator'">Calculate loan</button>
 
 <script>
     function enableEdit() {
@@ -239,7 +239,7 @@
       }
 
         // Send data to server-side endpoint for updating client details
-        fetch('/bank/client/' + clientId + '/update', {
+        fetch('/client/' + clientId + '/update', {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -292,7 +292,7 @@
 
     function makeTransfer(button) {
         var accountNumber = button.dataset.accountNumber;
-        var url = '/bank/transfer-form?senderAccountNumber=' + encodeURIComponent(accountNumber);
+        var url = '/account/transfer-form?senderAccountNumber=' + encodeURIComponent(accountNumber);
         window.location.href = url;
     }
 

@@ -3,5 +3,7 @@ package com.wis1.bank.repository;
 import com.wis1.bank.entity.Client;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface ClientRepository extends JpaRepository<Client, Long> {
+import java.util.UUID;
+
+public interface ClientRepository extends JpaRepository<Client, UUID> {
 }

@@ -20,6 +20,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/bank/json")
@@ -57,7 +58,7 @@ public class JsonController {
     }
 
     @GetMapping("/client/{clientId}")
-    public ResponseEntity<?> getClientDetails(@PathVariable Long clientId) {
+    public ResponseEntity<?> getClientDetails(@PathVariable UUID clientId) {
         ClientDto clientDto = clientService.getClientById(clientId);
 
         if (clientDto != null) {
@@ -144,7 +145,7 @@ public class JsonController {
     }
 
     @PostMapping("/account/{accountNumber}/client/{clientId}")
-    public ResponseEntity<?> addAccountToClient(@PathVariable Long clientId,
+    public ResponseEntity<?> addAccountToClient(@PathVariable UUID clientId,
                                                 @PathVariable String accountNumber,
                                                 @RequestParam String username,
                                                 @RequestParam String password) {
@@ -159,7 +160,7 @@ public class JsonController {
     }
 
     @PutMapping("/client/{clientId}/update")
-    public ResponseEntity<Void> updateClientData(@PathVariable Long clientId,
+    public ResponseEntity<Void> updateClientData(@PathVariable UUID clientId,
                                                  @Valid @RequestBody ClientForm clientForm) {
         clientService.updateClient(clientId, clientForm);
         return ResponseEntity.ok().build();
@@ -171,7 +172,7 @@ public class JsonController {
     }
 
     @DeleteMapping("/client/{clientId}")
-    public ResponseEntity<Void> deleteClient(@PathVariable Long clientId) {
+    public ResponseEntity<Void> deleteClient(@PathVariable UUID clientId) {
         clientService.deleteClient(clientId);
         return ResponseEntity.ok().build();
     }

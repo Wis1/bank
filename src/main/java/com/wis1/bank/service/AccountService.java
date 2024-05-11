@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 public class AccountService {
@@ -68,7 +69,7 @@ public class AccountService {
     }
 
     public void depositMoney(WithdrawDepositForm depositForm) {
-        Long clientId = depositForm.getClientId();
+        UUID clientId = depositForm.getClientId();
         String accountNumber = depositForm.getAccountNumber();
         BigDecimal sum = depositForm.getSum();
 
@@ -117,7 +118,7 @@ public class AccountService {
 
     public void withdraw(WithdrawDepositForm form) {
 
-        Long clientId = form.getClientId();
+        UUID clientId = form.getClientId();
         String accountNumber = form.getAccountNumber();
         BigDecimal amount = form.getSum();
 

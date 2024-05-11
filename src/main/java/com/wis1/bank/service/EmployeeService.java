@@ -8,6 +8,8 @@ import com.wis1.bank.repository.ClientRepository;
 import com.wis1.bank.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
 
+import java.util.UUID;
+
 @RequiredArgsConstructor
 public class EmployeeService {
 
@@ -56,7 +58,7 @@ public class EmployeeService {
         }
     }
 
-    public void addAccountToClient(Long clientId, String accountNumber) {
+    public void addAccountToClient(UUID clientId, String accountNumber) {
 
         clientRepository.findById(clientId)
                 .ifPresentOrElse(client -> accountRepository.save(new Account(accountNumber, client)), () -> {

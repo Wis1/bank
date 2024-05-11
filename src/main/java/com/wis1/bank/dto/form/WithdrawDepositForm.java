@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -12,6 +13,6 @@ import java.math.BigDecimal;
 public class WithdrawDepositForm {
 
     private String accountNumber;
-    private Long clientId;
+    private UUID clientId;
     private BigDecimal sum;
 }

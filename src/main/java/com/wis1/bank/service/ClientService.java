@@ -52,14 +52,14 @@ public class ClientService {
         return loanAmount / (loanTerm * 12) * (1 + interestRate);
     }
 
-    public ClientDto getClientById(Long clientId) {
+    public ClientDto getClientById(UUID clientId) {
 
         return clientRepository.findById(clientId)
                 .map(ClientMapper::mapToClientDto)
                 .orElse(null);
     }
 
-    public void updateClient(Long clientId, ClientForm clientForm) {
+    public void updateClient(UUID clientId, ClientForm clientForm) {
         Optional<Client> optionalClient = clientRepository.findById(clientId);
 
         optionalClient.ifPresent(client -> {
@@ -79,7 +79,7 @@ public class ClientService {
                 .collect(Collectors.toList());
     }
 
-    public void deleteClient(Long clientId) {
+    public void deleteClient(UUID clientId) {
         clientRepository.findById(clientId)
                 .orElseThrow(() -> new RuntimeException("Client with id " + clientId + " not found"))
                 .getAccounts()

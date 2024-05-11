@@ -1,26 +1,33 @@
 package com.wis1.bank.service;
 
+import com.wis1.bank.dto.ClientDtoToAccount;
+import com.wis1.bank.dto.TransactionDto;
+import com.wis1.bank.entity.Transaction;
 import com.wis1.bank.dto.form.TransferForm;
 import com.wis1.bank.dto.form.WithdrawDepositForm;
 import com.wis1.bank.entity.Account;
 import com.wis1.bank.entity.Client;
 import com.wis1.bank.repository.AccountRepository;
 import com.wis1.bank.repository.ClientRepository;
+import com.wis1.bank.repository.TransactionRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
 
 @RequiredArgsConstructor
 public class AccountService {
     private final AccountRepository accountRepository;
     private final ClientRepository clientRepository;
+    private final TransactionRepository transactionRepository;
 
     public void transferMoney(TransferForm transferForm) {
 
-        String senderAccountNumber= transferForm.getSenderAccountNumber();
-        String receiverAccountNumber= transferForm.getReceiverAccountNumber();
-        BigDecimal amount= transferForm.getAmount();
+        String senderAccountNumber = transferForm.getSenderAccountNumber();
+        String receiverAccountNumber = transferForm.getReceiverAccountNumber();
+        BigDecimal amount = transferForm.getAmount();
 
         Client sender = findClientByAccountNumber(senderAccountNumber);
         Client receiver = findClientByAccountNumber(receiverAccountNumber);
@@ -35,11 +42,19 @@ public class AccountService {
             throw new IllegalArgumentException("Insufficient balance in sender account");
         }
         senderAccount.setBalance(senderBalance.subtract(amount));
+
+        Transaction transactionSender = new Transaction(new Date(), "Transfer", amount, sender, receiver);
+        transactionRepository.save(transactionSender);
+        senderAccount.addTransaction(transactionSender);
         accountRepository.save(senderAccount);
 
+
+        Transaction transactionReceiver = new Transaction(new Date(), "Transfer", amount, sender, receiver);
+        transactionRepository.save(transactionReceiver);
         Account receiverAccount = getAccountByNumber(receiver, receiverAccountNumber);
         BigDecimal receiverBalance = receiverAccount.getBalance();
         receiverAccount.setBalance(receiverBalance.add(amount));
+        receiverAccount.addTransaction(transactionReceiver);
         accountRepository.save(receiverAccount);
     }
 
@@ -68,6 +83,10 @@ public class AccountService {
                 .orElseThrow(() -> new IllegalArgumentException("Client hasn't account with number: " + accountNumber));
         BigDecimal newBalance = account.getBalance().add(sum);
         account.setBalance(newBalance);
+
+        Transaction transaction = new Transaction(new Date(), "Deposit", sum, null, client);
+        transactionRepository.save(transaction);
+        account.addTransaction(transaction);
         accountRepository.save(account);
     }
 
@@ -77,6 +96,14 @@ public class AccountService {
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Account not found for client"));
     }
+
+    public List<TransactionDto> getAccountHistoryByAccountNumber(String accountNumber) {
+        return accountRepository.findByAccountNumber(accountNumber)
+                .map(Account::getHistory)
+                .map(TransactionMapper::mapToDtoList)
+                .orElseThrow(() -> new RuntimeException("There is any account with this number"));
+    }
+
 
     @Transactional
     public void deleteAccount(Long clientId, String accountNumber) {
@@ -90,9 +117,9 @@ public class AccountService {
 
     public void withdraw(WithdrawDepositForm form) {
 
-        Long clientId= form.getClientId();
-        String accountNumber= form.getAccountNumber();
-        BigDecimal amount= form.getSum();
+        Long clientId = form.getClientId();
+        String accountNumber = form.getAccountNumber();
+        BigDecimal amount = form.getSum();
 
         Client client = clientRepository.findById(clientId)
                 .orElseThrow(() -> new RuntimeException("Client with id: " + clientId + " not exist."));
@@ -108,6 +135,27 @@ public class AccountService {
 
         BigDecimal newBalance = account.getBalance().subtract(amount);
         account.setBalance(newBalance);
+        Transaction transaction = new Transaction(new Date(), "Withdraw", amount, client, null);
+        transactionRepository.save(transaction);
+        account.addTransaction(transaction);
         accountRepository.save(account);
+    }
+
+    private static class TransactionMapper {
+        private static TransactionDto mapToDto(Transaction transaction) {
+            return new TransactionDto(transaction.getId(), transaction.getTimestamp(), transaction.getType(), transaction.getAmount(), mapToClientDtoToAccount(transaction.getSender()), mapToClientDtoToAccount(transaction.getReceiver()));
+        }
+
+        private static List<TransactionDto> mapToDtoList(List<Transaction> transactions) {
+            return transactions.stream()
+                    .map(TransactionMapper::mapToDto)
+                    .toList();
+        }
+
+        public static ClientDtoToAccount mapToClientDtoToAccount(Client client) {
+            if (client != null)
+                return new ClientDtoToAccount(client.getId(), client.getName(), client.getLastname(), client.getPesel());
+            else return null;
+        }
     }
 }

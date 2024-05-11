@@ -45,6 +45,11 @@ public class JsonController {
             return ResponseEntity.ok("Client has been added.");
         }
     }
+    @GetMapping("/account/{accountNumber}/history")
+    public List<TransactionDto> getAccountHistory(@PathVariable String accountNumber) {
+        return accountService.getAccountHistoryByAccountNumber(accountNumber);
+    }
+
 
     @GetMapping("/client")
     public List<ClientDto> getAllClients() {

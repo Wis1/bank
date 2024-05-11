@@ -4,6 +4,7 @@ import com.wis1.bank.controller.GenericValidator;
 import com.wis1.bank.repository.AccountRepository;
 import com.wis1.bank.repository.ClientRepository;
 import com.wis1.bank.repository.EmployeeRepository;
+import com.wis1.bank.repository.TransactionRepository;
 import com.wis1.bank.service.AccountService;
 import com.wis1.bank.service.ClientService;
 import com.wis1.bank.service.EmployeeService;
@@ -17,8 +18,8 @@ public class AppConfig {
 
 
     @Bean
-    public AccountService accountService(AccountRepository accountRepository, ClientRepository clientRepository) {
-        return new AccountService(accountRepository, clientRepository);
+    public AccountService accountService(AccountRepository accountRepository, ClientRepository clientRepository, TransactionRepository transactionRepository) {
+        return new AccountService(accountRepository, clientRepository, transactionRepository);
     }
 
     @Bean

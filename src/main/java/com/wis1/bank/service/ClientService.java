@@ -7,10 +7,6 @@ import com.wis1.bank.entity.Account;
 import com.wis1.bank.entity.Client;
 import com.wis1.bank.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -24,19 +20,8 @@ public class ClientService {
     private final ClientRepository clientRepository;
 
 
-    public ResponseEntity<?> createClient(ClientForm clientForm) {
-        BindingResult result = new BeanPropertyBindingResult(clientForm, "clientForm");
-
-        if (result.hasErrors()) {
-            Map<String, String> errors = new HashMap<>();
-            for (FieldError error : result.getFieldErrors()) {
-                errors.put(error.getField(), error.getDefaultMessage());
-            }
-            return ResponseEntity.badRequest().body(errors);
-        } else {
-            ClientDto clientDto = ClientMapper.mapToClientDto(clientRepository.save(ClientMapper.mapToClient(clientForm)));
-            return ResponseEntity.ok(clientDto);
-        }
+    public ClientDto createClient(ClientForm clientForm) {
+            return ClientMapper.mapToClientDto(clientRepository.save(ClientMapper.mapToClient(clientForm)));
     }
 
     public List<ClientDto> getAllClient() {

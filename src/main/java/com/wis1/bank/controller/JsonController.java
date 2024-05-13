@@ -42,8 +42,8 @@ public class JsonController {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body("Validation error: " + bindingResult.getAllErrors());
         } else {
-            clientService.createClient(clientForm);
-            return ResponseEntity.ok("Client has been added.");
+            ClientDto clientDto=clientService.createClient(clientForm);
+            return ResponseEntity.ok("Client "+ clientDto.name()+" "+clientDto.lastname() +" has been added.");
         }
     }
     @GetMapping("/account/{accountNumber}/history")

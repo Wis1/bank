@@ -9,6 +9,7 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @AllArgsConstructor
@@ -18,8 +19,8 @@ import java.util.List;
 public class Account {
 
     @Id
-    @GeneratedValue
-    private Long id;
+    @Column(unique = true)
+    private UUID id = UUID.randomUUID();
     @Column
     private String accountNumber;
     @ManyToOne

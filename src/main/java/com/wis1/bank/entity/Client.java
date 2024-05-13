@@ -19,7 +19,7 @@ import java.util.UUID;
 public class Client {
 
     @Id
-    private UUID id = UUID.randomUUID(); //UUID
+    private UUID id = UUID.randomUUID();
     @Column
     private String name;
     @Column

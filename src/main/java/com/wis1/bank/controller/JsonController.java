@@ -12,6 +12,7 @@ import com.wis1.bank.service.EmployeeService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -66,6 +67,14 @@ public class JsonController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No client with id= '" + clientId + "' found");
         }
+    }
+
+    @GetMapping
+    public Page<ClientDto> filterUserByCriteria(ClientSearch clientSearch,
+                                                @RequestParam(required = false, defaultValue = "0") Integer pageNo,
+                                                @RequestParam(required = false, defaultValue = "10") Integer pageSize,
+                                                @RequestParam(required = false, defaultValue = "login") String sortBy) {
+        return clientService.filterByCriteria(clientSearch, pageNo, pageSize, sortBy);
     }
 
     @PostMapping("/transfer")

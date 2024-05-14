@@ -1,10 +1,7 @@
 package com.wis1.bank.configuration;
 
 import com.wis1.bank.controller.GenericValidator;
-import com.wis1.bank.repository.AccountRepository;
-import com.wis1.bank.repository.ClientRepository;
-import com.wis1.bank.repository.EmployeeRepository;
-import com.wis1.bank.repository.TransactionRepository;
+import com.wis1.bank.repository.*;
 import com.wis1.bank.service.AccountService;
 import com.wis1.bank.service.ClientService;
 import com.wis1.bank.service.EmployeeService;
@@ -23,8 +20,8 @@ public class AppConfig {
     }
 
     @Bean
-    public ClientService clientService(ClientRepository clientRepository) {
-        return new ClientService(clientRepository);
+    public ClientService clientService(ClientRepository clientRepository, AddressRepository addressRepository) {
+        return new ClientService(clientRepository, addressRepository);
     }
 
     @Bean

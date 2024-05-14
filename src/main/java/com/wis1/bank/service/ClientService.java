@@ -1,12 +1,22 @@
 package com.wis1.bank.service;
 
 import com.wis1.bank.dto.AccountDto;
+import com.wis1.bank.dto.AddressDto;
 import com.wis1.bank.dto.ClientDto;
+import com.wis1.bank.dto.ClientSearch;
+import com.wis1.bank.dto.form.AddressForm;
 import com.wis1.bank.dto.form.ClientForm;
 import com.wis1.bank.entity.Account;
+import com.wis1.bank.entity.Address;
 import com.wis1.bank.entity.Client;
+import com.wis1.bank.repository.AddressRepository;
 import com.wis1.bank.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -18,9 +28,11 @@ import java.util.stream.IntStream;
 public class ClientService {
 
     private final ClientRepository clientRepository;
+    private final AddressRepository addressRepository;
 
 
     public ClientDto createClient(ClientForm clientForm) {
+        addressRepository.save(AddressMapper.mapToAddress(clientForm.getAddress()));
             return ClientMapper.mapToClientDto(clientRepository.save(ClientMapper.mapToClient(clientForm)));
     }
 
@@ -80,11 +92,11 @@ public class ClientService {
 
     private static class ClientMapper {
         public static Client mapToClient(ClientForm clientForm) {
-            return new Client(clientForm.getName(), clientForm.getLastname(), clientForm.getPesel());
+            return new Client(clientForm.getName(), clientForm.getLastname(), clientForm.getPesel(), clientForm.getAge(), clientForm.getPhoneNumber(), AddressMapper.mapToAddress(clientForm.getAddress()));
         }
 
         public static ClientDto mapToClientDto(Client client) {
-            return new ClientDto(client.getId(), client.getName(), client.getLastname(), client.getPesel(), AccountMapper.mapToListAccountDto(client.getAccounts()));
+            return new ClientDto(client.getId(), client.getName(), client.getLastname(), client.getPesel(), client.getAge(), client.getPhoneNumber(), AddressMapper.mapToAdressDto(client.getAddress()), AccountMapper.mapToListAccountDto(client.getAccounts()));
         }
 
         public static List<ClientDto> mapToListClientDto(List<Client> clients) {
@@ -100,13 +112,36 @@ public class ClientService {
         }
 
         public static List<AccountDto> mapToListAccountDto(List<Account> accounts) {
-            return accounts.stream()
-                    .map(AccountMapper::mapToAccountDto)
-                    .toList();
+            if (accounts!=null) {
+                return accounts.stream()
+                        .map(AccountMapper::mapToAccountDto)
+                        .toList();
+            }
+            return null;
+        }
+    }
+
+    private static class AddressMapper {
+        public static AddressDto mapToAdressDto(Address address) {
+            if (address!=null) {
+                return new AddressDto(address.getCity(), address.getStreet(), address.getBuildingNumber());
+            }
+            return null;
+        }
+
+        public static Address mapToAddress(AddressForm addressForm) {
+            return new Address(addressForm.getCity(), addressForm.getStreet(), addressForm.getBuildingNumber());
         }
     }
 
     public record LoanSchedule(int month, BigDecimal monthlyPayment) {
+    }
+
+    public Page<ClientDto> filterByCriteria(ClientSearch clientSearch, final Integer pageNo, final Integer pageSize, final String sortBy) {
+        Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
+        Specification<Client> specification = new ClientSpecification(clientSearch);
+        Page<Client> page = clientRepository.findAll(specification, paging);
+        return page.map(ClientMapper::mapToClientDto);
     }
 
 }

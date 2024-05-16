@@ -73,7 +73,7 @@ public class JsonController {
     public Page<ClientDto> filterUserByCriteria(ClientSearch clientSearch,
                                                 @RequestParam(required = false, defaultValue = "0") Integer pageNo,
                                                 @RequestParam(required = false, defaultValue = "10") Integer pageSize,
-                                                @RequestParam(required = false, defaultValue = "login") String sortBy) {
+                                                @RequestParam(required = false, defaultValue = "lastname") String sortBy) {
         return clientService.filterByCriteria(clientSearch, pageNo, pageSize, sortBy);
     }
 

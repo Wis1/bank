@@ -1,6 +1,7 @@
 package com.wis1.bank.service;
 
 import com.wis1.bank.dto.ClientSearch;
+import com.wis1.bank.entity.Address;
 import com.wis1.bank.entity.Client;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -27,6 +28,25 @@ public class ClientSpecification implements Specification<Client> {
 
         if (!ObjectUtils.isEmpty(clientSearch.getName())) {
             predicates.add(criteriaBuilder.like(root.get(Client.Fields.name), "%" + clientSearch.getName().toLowerCase() + "%"));
+        }
+        if (!ObjectUtils.isEmpty(clientSearch.getLastname())) {
+            predicates.add(criteriaBuilder.like(root.get(Client.Fields.lastname), "%" + clientSearch.getLastname().toLowerCase() + "%"));
+        }
+        if (!ObjectUtils.isEmpty(clientSearch.getPesel())) {
+            predicates.add(criteriaBuilder.like(root.get(Client.Fields.pesel), "%" + clientSearch.getPesel().toLowerCase() + "%"));
+        }
+        if (!ObjectUtils.isEmpty(clientSearch.getAge())) {
+            predicates.add(criteriaBuilder.equal(root.get(Client.Fields.age), clientSearch.getAge()));
+        }
+        if (!ObjectUtils.isEmpty(clientSearch.getAddress())) {
+            if (!ObjectUtils.isEmpty(clientSearch.getAddress().getCity())) {
+                String cityPattern = "%" + clientSearch.getAddress().getCity().toLowerCase() + "%";
+                predicates.add(criteriaBuilder.like(root.get(Client.Fields.address).get(Address.Fields.city), cityPattern));
+            }
+            if (!ObjectUtils.isEmpty(clientSearch.getAddress().getStreet())) {
+                String cityPattern =  "%" + clientSearch.getAddress().getStreet().toLowerCase() + "%";
+                predicates.add(criteriaBuilder.like(root.get(Client.Fields.address).get(Address.Fields.street), cityPattern));
+            }
         }
         return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
     }

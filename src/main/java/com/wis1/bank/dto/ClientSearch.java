@@ -1,6 +1,5 @@
 package com.wis1.bank.dto;
 
-import com.wis1.bank.entity.Address;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +12,16 @@ public class ClientSearch {
     private String name;
     private String lastname;
     private String pesel;
-    private short age;
+    private Short age;
     private String phoneNumber;
-    private Address address;
+    private AddressSearch address;
+
+    @AllArgsConstructor
+    @Getter
+    @Setter
+    public static class AddressSearch {
+        private String city;
+        private String street;
+        private Short buildingNumber;
+    }
 }

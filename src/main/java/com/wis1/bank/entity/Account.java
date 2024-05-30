@@ -28,7 +28,7 @@ public class Account {
     @Column
     private BigDecimal balance;
     @OneToMany
-    private List<Transaction> history;
+    private List<TransactionLog> history;
 
     public Account(String accountNumber, Client client, BigDecimal balance) {
         this.accountNumber = accountNumber;
@@ -43,8 +43,8 @@ public class Account {
         this.history= new ArrayList<>();
     }
 
-    public void addTransaction(Transaction transaction) {
-        history.add(transaction);
+    public void addTransaction(TransactionLog transactionLog) {
+        history.add(transactionLog);
     }
 }
 

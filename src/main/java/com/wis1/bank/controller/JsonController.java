@@ -48,12 +48,12 @@ public class JsonController {
         }
     }
     @GetMapping("/account/{accountNumber}/history")
-    public List<TransactionDto> getAccountHistory(@PathVariable String accountNumber) {
+    public List<TransactionLogDto> getAccountHistory(@PathVariable String accountNumber) {
         return accountService.getAccountHistoryByAccountNumber(accountNumber);
     }
 
 
-    @GetMapping("/client")
+    @GetMapping("/allClients")
     public List<ClientDto> getAllClients() {
         return clientService.getAllClient();
     }

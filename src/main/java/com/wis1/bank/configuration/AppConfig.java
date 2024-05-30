@@ -15,8 +15,8 @@ public class AppConfig {
 
 
     @Bean
-    public AccountService accountService(AccountRepository accountRepository, ClientRepository clientRepository, TransactionRepository transactionRepository) {
-        return new AccountService(accountRepository, clientRepository, transactionRepository);
+    public AccountService accountService(AccountRepository accountRepository, ClientRepository clientRepository, TransactionLogRepository transactionLogRepository) {
+        return new AccountService(accountRepository, clientRepository, transactionLogRepository);
     }
 
     @Bean

@@ -1,15 +1,15 @@
 package com.wis1.bank.service;
 
 import com.wis1.bank.dto.ClientDtoToAccount;
-import com.wis1.bank.dto.TransactionDto;
-import com.wis1.bank.entity.Transaction;
+import com.wis1.bank.dto.TransactionLogDto;
+import com.wis1.bank.entity.TransactionLog;
 import com.wis1.bank.dto.form.TransferForm;
 import com.wis1.bank.dto.form.WithdrawDepositForm;
 import com.wis1.bank.entity.Account;
 import com.wis1.bank.entity.Client;
 import com.wis1.bank.repository.AccountRepository;
 import com.wis1.bank.repository.ClientRepository;
-import com.wis1.bank.repository.TransactionRepository;
+import com.wis1.bank.repository.TransactionLogRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -22,7 +22,7 @@ import java.util.UUID;
 public class AccountService {
     private final AccountRepository accountRepository;
     private final ClientRepository clientRepository;
-    private final TransactionRepository transactionRepository;
+    private final TransactionLogRepository transactionLogRepository;
 
     public void transferMoney(TransferForm transferForm) {
 
@@ -44,14 +44,12 @@ public class AccountService {
         }
         senderAccount.setBalance(senderBalance.subtract(amount));
 
-        Transaction transactionSender = new Transaction(new Date(), "Transfer", amount, sender, receiver);
-        transactionRepository.save(transactionSender);
+        TransactionLog transactionSender = saveTransactionLog("Transfer", amount, sender, receiver);
         senderAccount.addTransaction(transactionSender);
         accountRepository.save(senderAccount);
 
 
-        Transaction transactionReceiver = new Transaction(new Date(), "Transfer", amount, sender, receiver);
-        transactionRepository.save(transactionReceiver);
+        TransactionLog transactionReceiver = saveTransactionLog("Transfer", amount, sender, receiver);
         Account receiverAccount = getAccountByNumber(receiver, receiverAccountNumber);
         BigDecimal receiverBalance = receiverAccount.getBalance();
         receiverAccount.setBalance(receiverBalance.add(amount));
@@ -85,9 +83,8 @@ public class AccountService {
         BigDecimal newBalance = account.getBalance().add(sum);
         account.setBalance(newBalance);
 
-        Transaction transaction = new Transaction(new Date(), "Deposit", sum, null, client);
-        transactionRepository.save(transaction);
-        account.addTransaction(transaction);
+        TransactionLog transactionLog = saveTransactionLog("Deposit", sum, null, client);
+        account.addTransaction(transactionLog);
         accountRepository.save(account);
     }
 
@@ -98,7 +95,7 @@ public class AccountService {
                 .orElseThrow(() -> new IllegalArgumentException("Account not found for client"));
     }
 
-    public List<TransactionDto> getAccountHistoryByAccountNumber(String accountNumber) {
+    public List<TransactionLogDto> getAccountHistoryByAccountNumber(String accountNumber) {
         return accountRepository.findByAccountNumber(accountNumber)
                 .map(Account::getHistory)
                 .map(TransactionMapper::mapToDtoList)
@@ -136,19 +133,21 @@ public class AccountService {
 
         BigDecimal newBalance = account.getBalance().subtract(amount);
         account.setBalance(newBalance);
-        Transaction transaction = new Transaction(new Date(), "Withdraw", amount, client, null);
-        transactionRepository.save(transaction);
-        account.addTransaction(transaction);
+        TransactionLog transactionLog = saveTransactionLog("Withdraw", amount, client, null);
+        account.addTransaction(transactionLog);
         accountRepository.save(account);
+    }
+    private TransactionLog saveTransactionLog(String type, BigDecimal amount, Client sender, Client receiver) {
+        return transactionLogRepository.save(new TransactionLog(new Date(), type, amount, sender, receiver));
     }
 
     private static class TransactionMapper {
-        private static TransactionDto mapToDto(Transaction transaction) {
-            return new TransactionDto(transaction.getId(), transaction.getTimestamp(), transaction.getType(), transaction.getAmount(), mapToClientDtoToAccount(transaction.getSender()), mapToClientDtoToAccount(transaction.getReceiver()));
+        private static TransactionLogDto mapToDto(TransactionLog transactionLog) {
+            return new TransactionLogDto(transactionLog.getId(), transactionLog.getTimestamp(), transactionLog.getType(), transactionLog.getAmount(), mapToClientDtoToAccount(transactionLog.getSender()), mapToClientDtoToAccount(transactionLog.getReceiver()));
         }
 
-        private static List<TransactionDto> mapToDtoList(List<Transaction> transactions) {
-            return transactions.stream()
+        private static List<TransactionLogDto> mapToDtoList(List<TransactionLog> transactionLogs) {
+            return transactionLogs.stream()
                     .map(TransactionMapper::mapToDto)
                     .toList();
         }

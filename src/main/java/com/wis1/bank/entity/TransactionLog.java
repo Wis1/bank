@@ -13,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Entity
-public class Transaction {
+public class TransactionLog {
 
     @Id
     @Column(unique = true)
@@ -34,7 +34,7 @@ public class Transaction {
     @JoinColumn(name = "receiver_id")
     private Client receiver;
 
-    public Transaction(Date timestamp, String type, BigDecimal amount, Client sender, Client receiver) {
+    public TransactionLog(Date timestamp, String type, BigDecimal amount, Client sender, Client receiver) {
         this.timestamp = timestamp;
         this.type = type;
         this.amount = amount;

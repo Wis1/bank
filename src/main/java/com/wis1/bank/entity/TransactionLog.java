@@ -26,6 +26,8 @@ public class TransactionLog {
 
     private BigDecimal amount;
 
+    private boolean success;
+
     @ManyToOne
     @JoinColumn(name = "sender_id")
     private Client sender;
@@ -34,12 +36,13 @@ public class TransactionLog {
     @JoinColumn(name = "receiver_id")
     private Client receiver;
 
-    public TransactionLog(Date timestamp, String type, BigDecimal amount, Client sender, Client receiver) {
+    public TransactionLog(Date timestamp, String type, BigDecimal amount, Client sender, Client receiver, boolean success) {
         this.timestamp = timestamp;
         this.type = type;
         this.amount = amount;
         this.sender = sender;
         this.receiver = receiver;
+        this.success = success;
     }
 
     @Override
@@ -50,6 +53,7 @@ public class TransactionLog {
                 ", amount=" + amount +
                 ", sender=" + sender +
                 ", receiver=" + receiver +
+                ", success=" + success +
                 '}';
     }
 }

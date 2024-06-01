@@ -34,28 +34,35 @@ public class AccountService {
         Client receiver = findClientByAccountNumber(receiverAccountNumber);
 
         if (sender == null || receiver == null) {
+            saveTransactionLog("Transfer", amount, sender, receiver, false);
             throw new IllegalArgumentException("Sender or receiver client not found");
         }
 
-        Account senderAccount = getAccountByNumber(sender, senderAccountNumber);
-        BigDecimal senderBalance = senderAccount.getBalance();
-        if (senderBalance.compareTo(amount) < 0) {
-            throw new IllegalArgumentException("Insufficient balance in sender account");
+        try {
+            Account senderAccount = getAccountByNumber(sender, senderAccountNumber);
+            BigDecimal senderBalance = senderAccount.getBalance();
+            if (senderBalance.compareTo(amount) < 0) {
+                saveTransactionLog("Transfer", amount, sender, receiver, false);
+                throw new IllegalArgumentException("Insufficient balance in sender account");
+            }
+            senderAccount.setBalance(senderBalance.subtract(amount));
+
+            TransactionLog transactionSender = saveTransactionLog("Transfer", amount, sender, receiver, true);
+            senderAccount.addTransaction(transactionSender);
+            accountRepository.save(senderAccount);
+
+
+            TransactionLog transactionReceiver = saveTransactionLog("Transfer", amount, sender, receiver, true);
+            Account receiverAccount = getAccountByNumber(receiver, receiverAccountNumber);
+            BigDecimal receiverBalance = receiverAccount.getBalance();
+            receiverAccount.setBalance(receiverBalance.add(amount));
+            receiverAccount.addTransaction(transactionReceiver);
+            accountRepository.save(receiverAccount);
+        } catch (IllegalArgumentException e) {
+            saveTransactionLog("Transfer", amount, sender, receiver, false);
+            throw e;
         }
-        senderAccount.setBalance(senderBalance.subtract(amount));
-
-        TransactionLog transactionSender = saveTransactionLog("Transfer", amount, sender, receiver);
-        senderAccount.addTransaction(transactionSender);
-        accountRepository.save(senderAccount);
-
-
-        TransactionLog transactionReceiver = saveTransactionLog("Transfer", amount, sender, receiver);
-        Account receiverAccount = getAccountByNumber(receiver, receiverAccountNumber);
-        BigDecimal receiverBalance = receiverAccount.getBalance();
-        receiverAccount.setBalance(receiverBalance.add(amount));
-        receiverAccount.addTransaction(transactionReceiver);
-        accountRepository.save(receiverAccount);
-    }
+     }
 
     private Client findClientByAccountNumber(String accountNumber) {
 
@@ -75,17 +82,23 @@ public class AccountService {
                 .orElseThrow(() -> new IllegalArgumentException("Client with id: " + clientId + " not exist."));
 
         if (client.getAccounts().isEmpty()) {
+            TransactionLog transactionLog = saveTransactionLog("Deposit", sum, null, client, false);
             throw new IllegalArgumentException("Client with id: " + clientId + " does not have any account.");
         }
 
-        Account account = accountRepository.findByClientAndAccountNumber(client, accountNumber)
-                .orElseThrow(() -> new IllegalArgumentException("Client hasn't account with number: " + accountNumber));
-        BigDecimal newBalance = account.getBalance().add(sum);
-        account.setBalance(newBalance);
+        try {
+            Account account = accountRepository.findByClientAndAccountNumber(client, accountNumber)
+                    .orElseThrow(() -> new IllegalArgumentException("Client hasn't account with number: " + accountNumber));
+            BigDecimal newBalance = account.getBalance().add(sum);
+            account.setBalance(newBalance);
 
-        TransactionLog transactionLog = saveTransactionLog("Deposit", sum, null, client);
-        account.addTransaction(transactionLog);
-        accountRepository.save(account);
+            TransactionLog transactionLog = saveTransactionLog("Deposit", sum, null, client, true);
+            account.addTransaction(transactionLog);
+            accountRepository.save(account);
+        } catch (IllegalArgumentException e) {
+            saveTransactionLog("Deposit", sum, null, client, false);
+            throw e;
+        }
     }
 
     private Account getAccountByNumber(Client client, String accountNumber) {
@@ -127,23 +140,31 @@ public class AccountService {
                 .findAny()
                 .orElseThrow(() -> new RuntimeException("Client hasn't account with number: " + accountNumber));
 
+
         if (account.getBalance().compareTo(amount) < 0) {
+            saveTransactionLog("Withdraw", amount, client, null, false);
             throw new RuntimeException("Client with id: " + clientId + " does not have enough money.");
         }
 
-        BigDecimal newBalance = account.getBalance().subtract(amount);
-        account.setBalance(newBalance);
-        TransactionLog transactionLog = saveTransactionLog("Withdraw", amount, client, null);
-        account.addTransaction(transactionLog);
-        accountRepository.save(account);
+        try {
+            BigDecimal newBalance = account.getBalance().subtract(amount);
+            account.setBalance(newBalance);
+            TransactionLog transactionLog = saveTransactionLog("Withdraw", amount, client, null, true);
+            account.addTransaction(transactionLog);
+            accountRepository.save(account);
+        }catch (IllegalArgumentException e) {
+            saveTransactionLog("Withdraw", amount, client, null, false);
+            throw e;
+        }
     }
-    private TransactionLog saveTransactionLog(String type, BigDecimal amount, Client sender, Client receiver) {
-        return transactionLogRepository.save(new TransactionLog(new Date(), type, amount, sender, receiver));
+
+    private TransactionLog saveTransactionLog(String type, BigDecimal amount, Client sender, Client receiver, boolean success) {
+        return transactionLogRepository.save(new TransactionLog(new Date(), type, amount, sender, receiver, success));
     }
 
     private static class TransactionMapper {
         private static TransactionLogDto mapToDto(TransactionLog transactionLog) {
-            return new TransactionLogDto(transactionLog.getId(), transactionLog.getTimestamp(), transactionLog.getType(), transactionLog.getAmount(), mapToClientDtoToAccount(transactionLog.getSender()), mapToClientDtoToAccount(transactionLog.getReceiver()));
+            return new TransactionLogDto(transactionLog.getId(), transactionLog.getTimestamp(), transactionLog.getType(), transactionLog.getAmount(), mapToClientDtoToAccount(transactionLog.getSender()), mapToClientDtoToAccount(transactionLog.getReceiver()), transactionLog.isSuccess());
         }
 
         private static List<TransactionLogDto> mapToDtoList(List<TransactionLog> transactionLogs) {

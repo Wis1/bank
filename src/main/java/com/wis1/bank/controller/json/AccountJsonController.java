@@ -1,9 +1,9 @@
 package com.wis1.bank.controller.json;
 
 import com.wis1.bank.controller.GenericValidator;
-import com.wis1.bank.dto.TransactionLogDto;
-import com.wis1.bank.dto.form.TransferForm;
-import com.wis1.bank.dto.form.WithdrawDepositForm;
+import com.wis1.bank.controller.dto.TransactionLogDto;
+import com.wis1.bank.controller.dto.form.TransferForm;
+import com.wis1.bank.controller.dto.form.WithdrawDepositForm;
 import com.wis1.bank.service.AccountService;
 import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package com.wis1.bank.repository;
 
-import com.wis1.bank.entity.Client;
+import com.wis1.bank.repository.entity.Client;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;

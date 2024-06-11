@@ -1,4 +1,4 @@
-package com.wis1.bank.dto.form;
+package com.wis1.bank.controller.dto.form;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

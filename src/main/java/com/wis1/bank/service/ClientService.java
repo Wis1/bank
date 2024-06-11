@@ -1,14 +1,14 @@
 package com.wis1.bank.service;
 
-import com.wis1.bank.dto.AccountDto;
-import com.wis1.bank.dto.AddressDto;
-import com.wis1.bank.dto.ClientDto;
-import com.wis1.bank.dto.ClientSearch;
-import com.wis1.bank.dto.form.AddressForm;
-import com.wis1.bank.dto.form.ClientForm;
-import com.wis1.bank.entity.Account;
-import com.wis1.bank.entity.Address;
-import com.wis1.bank.entity.Client;
+import com.wis1.bank.controller.dto.AccountDto;
+import com.wis1.bank.controller.dto.AddressDto;
+import com.wis1.bank.controller.dto.ClientDto;
+import com.wis1.bank.controller.dto.ClientSearch;
+import com.wis1.bank.controller.dto.form.AddressForm;
+import com.wis1.bank.controller.dto.form.ClientForm;
+import com.wis1.bank.repository.entity.Account;
+import com.wis1.bank.repository.entity.Address;
+import com.wis1.bank.repository.entity.Client;
 import com.wis1.bank.repository.AddressRepository;
 import com.wis1.bank.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.wis1.bank.entity;
+package com.wis1.bank.repository.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

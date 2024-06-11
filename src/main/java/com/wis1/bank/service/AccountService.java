@@ -1,12 +1,12 @@
 package com.wis1.bank.service;
 
-import com.wis1.bank.dto.ClientDtoToAccount;
-import com.wis1.bank.dto.TransactionLogDto;
-import com.wis1.bank.entity.TransactionLog;
-import com.wis1.bank.dto.form.TransferForm;
-import com.wis1.bank.dto.form.WithdrawDepositForm;
-import com.wis1.bank.entity.Account;
-import com.wis1.bank.entity.Client;
+import com.wis1.bank.controller.dto.ClientDtoToAccount;
+import com.wis1.bank.controller.dto.TransactionLogDto;
+import com.wis1.bank.repository.entity.TransactionLog;
+import com.wis1.bank.controller.dto.form.TransferForm;
+import com.wis1.bank.controller.dto.form.WithdrawDepositForm;
+import com.wis1.bank.repository.entity.Account;
+import com.wis1.bank.repository.entity.Client;
 import com.wis1.bank.repository.AccountRepository;
 import com.wis1.bank.repository.ClientRepository;
 import com.wis1.bank.repository.TransactionLogRepository;

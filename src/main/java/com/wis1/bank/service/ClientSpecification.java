@@ -1,8 +1,8 @@
 package com.wis1.bank.service;
 
-import com.wis1.bank.dto.ClientSearch;
-import com.wis1.bank.entity.Address;
-import com.wis1.bank.entity.Client;
+import com.wis1.bank.controller.dto.ClientSearch;
+import com.wis1.bank.repository.entity.Address;
+import com.wis1.bank.repository.entity.Client;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;

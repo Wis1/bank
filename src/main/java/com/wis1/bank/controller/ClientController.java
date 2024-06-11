@@ -1,7 +1,7 @@
 package com.wis1.bank.controller;
 
-import com.wis1.bank.dto.ClientDto;
-import com.wis1.bank.dto.form.ClientForm;
+import com.wis1.bank.controller.dto.ClientDto;
+import com.wis1.bank.controller.dto.form.ClientForm;
 import com.wis1.bank.service.ClientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

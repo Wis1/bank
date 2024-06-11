@@ -1,7 +1,7 @@
 package com.wis1.bank.controller;
 
-import com.wis1.bank.dto.form.TransferForm;
-import com.wis1.bank.dto.form.WithdrawDepositForm;
+import com.wis1.bank.controller.dto.form.TransferForm;
+import com.wis1.bank.controller.dto.form.WithdrawDepositForm;
 import com.wis1.bank.service.AccountService;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;

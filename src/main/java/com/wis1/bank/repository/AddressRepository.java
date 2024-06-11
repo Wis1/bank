@@ -1,6 +1,6 @@
 package com.wis1.bank.repository;
 
-import com.wis1.bank.entity.Address;
+import com.wis1.bank.repository.entity.Address;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;

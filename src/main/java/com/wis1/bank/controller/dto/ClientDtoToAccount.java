@@ -1,4 +1,4 @@
-package com.wis1.bank.dto;
+package com.wis1.bank.controller.dto;
 
 import java.util.UUID;
 

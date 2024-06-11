@@ -1,10 +1,10 @@
 package com.wis1.bank.controller.json;
 
 import com.wis1.bank.controller.GenericValidator;
-import com.wis1.bank.dto.ClientDto;
-import com.wis1.bank.dto.ClientSearch;
-import com.wis1.bank.dto.form.EmployeeForm;
-import com.wis1.bank.entity.Employee;
+import com.wis1.bank.controller.dto.ClientDto;
+import com.wis1.bank.controller.dto.ClientSearch;
+import com.wis1.bank.controller.dto.form.EmployeeForm;
+import com.wis1.bank.repository.entity.Employee;
 import com.wis1.bank.service.ClientService;
 import com.wis1.bank.service.EmployeeService;
 import lombok.RequiredArgsConstructor;

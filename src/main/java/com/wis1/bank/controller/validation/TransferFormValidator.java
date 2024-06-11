@@ -1,6 +1,6 @@
-package com.wis1.bank.dto.validation;
+package com.wis1.bank.controller.validation;
 
-import com.wis1.bank.dto.form.TransferForm;
+import com.wis1.bank.controller.dto.form.TransferForm;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;

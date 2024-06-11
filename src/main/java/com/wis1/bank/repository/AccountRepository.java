@@ -1,7 +1,7 @@
 package com.wis1.bank.repository;
 
-import com.wis1.bank.entity.Account;
-import com.wis1.bank.entity.Client;
+import com.wis1.bank.repository.entity.Account;
+import com.wis1.bank.repository.entity.Client;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

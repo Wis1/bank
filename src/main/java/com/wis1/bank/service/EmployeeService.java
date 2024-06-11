@@ -1,8 +1,8 @@
 package com.wis1.bank.service;
 
-import com.wis1.bank.dto.form.EmployeeForm;
-import com.wis1.bank.entity.Account;
-import com.wis1.bank.entity.Employee;
+import com.wis1.bank.controller.dto.form.EmployeeForm;
+import com.wis1.bank.repository.entity.Account;
+import com.wis1.bank.repository.entity.Employee;
 import com.wis1.bank.repository.AccountRepository;
 import com.wis1.bank.repository.ClientRepository;
 import com.wis1.bank.repository.EmployeeRepository;

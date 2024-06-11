@@ -1,7 +1,7 @@
 package com.wis1.bank.controller;
 
-import com.wis1.bank.dto.form.EmployeeForm;
-import com.wis1.bank.entity.Employee;
+import com.wis1.bank.controller.dto.form.EmployeeForm;
+import com.wis1.bank.repository.entity.Employee;
 import com.wis1.bank.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.UUID;
 
@@ -42,6 +43,11 @@ public class ClientJsonController {
     @GetMapping("/all")
     public List<ClientDto> getAllClients() {
         return clientService.getAllClient();
+    }
+
+    @GetMapping("/rate")
+    public ResponseEntity<?> getActualRate() throws URISyntaxException {
+        return ResponseEntity.ok(clientService.getActualRate());
     }
 
     @GetMapping("/{clientId}")

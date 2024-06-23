@@ -12,14 +12,19 @@ import com.wis1.bank.repository.entity.Client;
 import com.wis1.bank.repository.AddressRepository;
 import com.wis1.bank.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -33,7 +38,7 @@ public class ClientService {
 
     public ClientDto createClient(ClientForm clientForm) {
         addressRepository.save(AddressMapper.mapToAddress(clientForm.getAddress()));
-            return ClientMapper.mapToClientDto(clientRepository.save(ClientMapper.mapToClient(clientForm)));
+        return ClientMapper.mapToClientDto(clientRepository.save(ClientMapper.mapToClient(clientForm)));
     }
 
     public List<ClientDto> getAllClient() {
@@ -90,6 +95,42 @@ public class ClientService {
         clientRepository.deleteById(clientId);
     }
 
+    public String getActualRate() throws URISyntaxException {
+        RestTemplate template = new RestTemplate();
+        String rates = template.getForObject(new URI("http://api.nbp.pl/api/exchangerates/tables/a/"), String.class);
+        JSONArray jsonArray = new JSONArray(rates);
+
+        List<String> selectedCurrencies = List.of("USD", "EUR", "GBP");
+
+        JSONArray filteredJsonArray = new JSONArray();
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject jsonObject = jsonArray.getJSONObject(i);
+
+            JSONArray ratesArray = jsonObject.getJSONArray("rates");
+
+            JSONArray filteredRatesArray = new JSONArray();
+
+            for (int j = 0; j < ratesArray.length(); j++) {
+                JSONObject rateObject = ratesArray.getJSONObject(j);
+
+                if (selectedCurrencies.contains(rateObject.getString("code"))) {
+                    filteredRatesArray.put(rateObject);
+                }
+            }
+
+            JSONObject filteredJsonObject = new JSONObject();
+            filteredJsonObject.put("table", jsonObject.getString("table"));
+            filteredJsonObject.put("no", jsonObject.getString("no"));
+            filteredJsonObject.put("effectiveDate", jsonObject.getString("effectiveDate"));
+            filteredJsonObject.put("rates", filteredRatesArray);
+
+            filteredJsonArray.put(filteredJsonObject);
+        }
+        return filteredJsonArray.toString();
+    }
+
+
     private static class ClientMapper {
         public static Client mapToClient(ClientForm clientForm) {
             return new Client(clientForm.getName(), clientForm.getLastname(), clientForm.getPesel(), clientForm.getAge(), clientForm.getPhoneNumber(), AddressMapper.mapToAddress(clientForm.getAddress()));
@@ -112,7 +153,7 @@ public class ClientService {
         }
 
         public static List<AccountDto> mapToListAccountDto(List<Account> accounts) {
-            if (accounts!=null) {
+            if (accounts != null) {
                 return accounts.stream()
                         .map(AccountMapper::mapToAccountDto)
                         .toList();
@@ -123,7 +164,7 @@ public class ClientService {
 
     private static class AddressMapper {
         public static AddressDto mapToAdressDto(Address address) {
-            if (address!=null) {
+            if (address != null) {
                 return new AddressDto(address.getCity(), address.getStreet(), address.getBuildingNumber());
             }
             return null;

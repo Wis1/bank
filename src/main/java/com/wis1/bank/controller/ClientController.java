@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.UUID;
 
@@ -71,5 +72,10 @@ public class ClientController {
     public String calculateLoan(@RequestParam double loanAmount, @RequestParam int loanTerm, Model model) {
         model.addAttribute("loanSchedule", clientService.calculateLoanSchedule(loanAmount, loanTerm));
         return "loanCalculatorResult";
+    }
+
+    @GetMapping("/rate")
+    public ResponseEntity<String> showActualRate() throws URISyntaxException {
+        return ResponseEntity.ok().body(clientService.getActualRate());
     }
 }

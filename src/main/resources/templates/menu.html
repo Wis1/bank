@@ -9,7 +9,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 25vh;
+            height: 45vh;
             margin: 0;
             background-image: url('/css/image.jpg');
             background-size: cover;
@@ -36,6 +36,14 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            position: relative;
+        }
+
+        .menu-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px; /* Odstęp między przyciskami a tabelką */
         }
 
         button {
@@ -43,6 +51,35 @@
             width: 200px;
         }
 
+        .rates-table {
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            display: none;
+            position: absolute; /* Ustawienie absolutne */
+            top: 100%; /* Odległość od dolnej krawędzi kontenera */
+            margin-left: auto; /* Automatyczne wycentrowanie w poziomie */
+            width: 200%; /* Szerokość tabelki */
+            max-width: 1800px;
+            z-index: 1;
+
+        }
+        .rates-table table {
+            width: 100%; /* Pełna szerokość tabeli */
+            border-collapse: collapse; /* Scalanie krawędzi komórek */
+        }
+
+        .rates-table th, .rates-table td {
+            padding: 8px; /* Wewnętrzny odstęp dla komórek */
+            text-align: left; /* Wyrównanie tekstu do lewej */
+            white-space: nowrap; /* Tekst w jednej linii */
+        }
+
+        .rates-table th {
+            background-color: #f2f2f2; /* Tło dla nagłówków kolumn */
+            font-weight: bold; /* Pogrubienie tekstu w nagłówkach */
+            border-bottom: 1px solid #ddd; /* Dolna granica dla nagłówków */
+        }
     </style>
 </head>
 <body>
@@ -52,6 +89,41 @@
     <button onclick="location.href='/client/form'">Create client</button>
     <button onclick="location.href='/account/transfer-form'">Make a transfer</button>
     <button onclick="location.href='/client/loanCalculator'">Calculate loan</button>
+    <div class="menu-content">
+        <button id="showRatesBtn">Show Actual Rates</button>
+        <div class="rates-table" id="ratesTable" data-loaded="false">
+        </div>
+    </div>
 </div>
+
+<script>
+
+    document.getElementById('showRatesBtn').addEventListener('click', function() {
+        var ratesTable = document.getElementById('ratesTable');
+        var isLoaded = ratesTable.getAttribute('data-loaded') === 'true';
+
+        if (ratesTable.style.display === 'none'|| !isLoaded) {
+            fetch('/client/rate')
+                .then(response => response.json())
+                .then(data => {
+                    var html = '<table>';
+                    html += '<tr><th>Currency</th><th>Code</th><th>Mid</th></tr>';
+
+                    data[0].rates.forEach(rate => {
+                        html += `<tr><td>${rate.currency}</td><td>${rate.code}</td><td>${rate.mid}</td></tr>`;
+                    });
+
+                    html += '</table>';
+
+                    ratesTable.innerHTML = html;
+                    ratesTable.style.display = 'block';
+                    ratesTable.setAttribute('data-loaded', 'true');
+                })
+                .catch(error => console.error('Error fetching rates:', error));
+        } else {
+            ratesTable.style.display = 'none';
+        }
+    });
+</script>
 </body>
 </html>

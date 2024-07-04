@@ -1,9 +1,6 @@
 package com.wis1.bank.service;
 
-import com.wis1.bank.controller.dto.AccountDto;
-import com.wis1.bank.controller.dto.AddressDto;
-import com.wis1.bank.controller.dto.ClientDto;
-import com.wis1.bank.controller.dto.ClientSearch;
+import com.wis1.bank.controller.dto.*;
 import com.wis1.bank.controller.dto.form.AddressForm;
 import com.wis1.bank.controller.dto.form.ClientForm;
 import com.wis1.bank.repository.entity.Account;
@@ -12,8 +9,6 @@ import com.wis1.bank.repository.entity.Client;
 import com.wis1.bank.repository.AddressRepository;
 import com.wis1.bank.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,8 +21,9 @@ import java.math.RoundingMode;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 public class ClientService {
@@ -78,7 +74,7 @@ public class ClientService {
 
         return IntStream.rangeClosed(1, loanTerm * 12)
                 .mapToObj(month -> new LoanSchedule(month, monthlyPayment))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public void deleteClient(UUID clientId) {
@@ -95,39 +91,23 @@ public class ClientService {
         clientRepository.deleteById(clientId);
     }
 
-    public String getActualRate() throws URISyntaxException {
+    public RateDto getActualRate() throws URISyntaxException {
         RestTemplate template = new RestTemplate();
-        String rates = template.getForObject(new URI("http://api.nbp.pl/api/exchangerates/tables/a/"), String.class);
-        JSONArray jsonArray = new JSONArray(rates);
+        RateDto[] rateDtos = template.getForObject(new URI("http://api.nbp.pl/api/exchangerates/tables/a/"), RateDto[].class);
 
-        List<String> selectedCurrencies = List.of("USD", "EUR", "GBP");
-
-        JSONArray filteredJsonArray = new JSONArray();
-
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject jsonObject = jsonArray.getJSONObject(i);
-
-            JSONArray ratesArray = jsonObject.getJSONArray("rates");
-
-            JSONArray filteredRatesArray = new JSONArray();
-
-            for (int j = 0; j < ratesArray.length(); j++) {
-                JSONObject rateObject = ratesArray.getJSONObject(j);
-
-                if (selectedCurrencies.contains(rateObject.getString("code"))) {
-                    filteredRatesArray.put(rateObject);
-                }
-            }
-
-            JSONObject filteredJsonObject = new JSONObject();
-            filteredJsonObject.put("table", jsonObject.getString("table"));
-            filteredJsonObject.put("no", jsonObject.getString("no"));
-            filteredJsonObject.put("effectiveDate", jsonObject.getString("effectiveDate"));
-            filteredJsonObject.put("rates", filteredRatesArray);
-
-            filteredJsonArray.put(filteredJsonObject);
+        if (rateDtos ==  null) {
+            return new RateDto("A", "000/A/NBP/0000", "0000-00-00", List.of());
         }
-        return filteredJsonArray.toString();
+
+        return new RateDto(
+                rateDtos[0].table(),
+                rateDtos[0].number(),
+                rateDtos[0].effectiveDate(),
+                rateDtos[0]
+                .rates()
+                .stream()
+                .filter(c -> c.code().equals("USD") || c.code().equals("EUR") || c.code().equals("GBP"))
+                .toList());
     }
 
 
@@ -151,7 +131,6 @@ public class ClientService {
         public static AccountDto mapToAccountDto(Account account) {
             return new AccountDto(account.getAccountNumber(), account.getBalance());
         }
-
         public static List<AccountDto> mapToListAccountDto(List<Account> accounts) {
             if (accounts != null) {
                 return accounts.stream()
@@ -161,7 +140,6 @@ public class ClientService {
             return null;
         }
     }
-
     private static class AddressMapper {
         public static AddressDto mapToAdressDto(Address address) {
             if (address != null) {
@@ -169,7 +147,6 @@ public class ClientService {
             }
             return null;
         }
-
         public static Address mapToAddress(AddressForm addressForm) {
             return new Address(addressForm.getCity(), addressForm.getStreet(), addressForm.getBuildingNumber());
         }
@@ -184,5 +161,4 @@ public class ClientService {
         Page<Client> page = clientRepository.findAll(specification, paging);
         return page.map(ClientMapper::mapToClientDto);
     }
-
 }

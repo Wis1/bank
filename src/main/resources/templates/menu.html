@@ -109,7 +109,7 @@
                     var html = '<table>';
                     html += '<tr><th>Currency</th><th>Code</th><th>Mid</th></tr>';
 
-                    data[0].rates.forEach(rate => {
+                    data.rates.forEach(rate => {
                         html += `<tr><td>${rate.currency}</td><td>${rate.code}</td><td>${rate.mid}</td></tr>`;
                     });
 

@@ -1,6 +1,7 @@
 package com.wis1.bank.controller;
 
 import com.wis1.bank.controller.dto.ClientDto;
+import com.wis1.bank.controller.dto.RateDto;
 import com.wis1.bank.controller.dto.form.ClientForm;
 import com.wis1.bank.service.ClientService;
 import jakarta.validation.Valid;
@@ -75,7 +76,7 @@ public class ClientController {
     }
 
     @GetMapping("/rate")
-    public ResponseEntity<String> showActualRate() throws URISyntaxException {
+    public ResponseEntity<RateDto> showActualRate() throws URISyntaxException {
         return ResponseEntity.ok().body(clientService.getActualRate());
     }
 }

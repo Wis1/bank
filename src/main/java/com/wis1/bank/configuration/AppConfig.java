@@ -5,6 +5,7 @@ import com.wis1.bank.repository.*;
 import com.wis1.bank.service.AccountService;
 import com.wis1.bank.service.ClientService;
 import com.wis1.bank.service.EmployeeService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -13,6 +14,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @EnableJpaRepositories(basePackages = "com.wis1.bank.repository")
 public class AppConfig {
 
+    @Value("${rate.api.endpoint.prod}")
+    private String uri;
 
     @Bean
     public AccountService accountService(AccountRepository accountRepository, ClientRepository clientRepository, TransactionLogRepository transactionLogRepository) {
@@ -21,7 +24,7 @@ public class AppConfig {
 
     @Bean
     public ClientService clientService(ClientRepository clientRepository, AddressRepository addressRepository) {
-        return new ClientService(clientRepository, addressRepository);
+        return new ClientService(clientRepository, addressRepository, uri);
     }
 
     @Bean

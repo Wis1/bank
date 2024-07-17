@@ -71,7 +71,7 @@ public class ClientController {
 
     @PostMapping("/calculateLoan")
     public String calculateLoan(@RequestParam double loanAmount, @RequestParam int loanTerm, Model model) {
-        model.addAttribute("loanSchedule", clientService.calculateLoanSchedule(loanAmount, loanTerm));
+        model.addAttribute("loanSchedule", clientService.calculateLoan(loanAmount, loanTerm));
         return "loanCalculatorResult";
     }
 

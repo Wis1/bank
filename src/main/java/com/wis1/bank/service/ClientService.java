@@ -21,15 +21,13 @@ import java.math.RoundingMode;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
-import java.util.stream.IntStream;
-
-import static java.util.stream.Collectors.toList;
 
 @RequiredArgsConstructor
 public class ClientService {
 
     private final ClientRepository clientRepository;
     private final AddressRepository addressRepository;
+    private final String uri;
 
 
     public ClientDto createClient(ClientForm clientForm) {
@@ -41,13 +39,25 @@ public class ClientService {
         return ClientMapper.mapToListClientDto(clientRepository.findAll());
     }
 
-    public BigDecimal calculateLoan(double loanAmount, int loanTerm) {
+    public List<LoanSchedule> calculateLoan(double loanAmount, int loanTerm) {
         double interestRate = 0.05;
-        return BigDecimal.valueOf(calculateMonthlyPayment(loanAmount, interestRate, loanTerm));
+        return calculateMonthlyPayment(loanAmount, interestRate, loanTerm);
     }
 
-    private double calculateMonthlyPayment(double loanAmount, double interestRate, int loanTerm) {
-        return loanAmount / (loanTerm * 12) * (1 + interestRate);
+    private List<LoanSchedule> calculateMonthlyPayment(double loanAmount, double interestRate, int loanTerm) {
+
+        double monthlyRate = interestRate / 12;
+        int n = loanTerm * 12;
+        double principalPart = loanAmount / n;
+        List<LoanSchedule> schedule= new ArrayList<>();
+
+        for (int i = 0; i < n; i++) {
+            double remainingPrincipal = loanAmount - i * principalPart;
+            double interestPart = remainingPrincipal * monthlyRate;
+            double monthlyPayment = principalPart + interestPart;
+            schedule.add(new LoanSchedule(i + 1, BigDecimal.valueOf(monthlyPayment).setScale(2, RoundingMode.HALF_DOWN)));
+        }
+        return schedule;
     }
 
     public ClientDto getClientById(UUID clientId) {
@@ -68,15 +78,6 @@ public class ClientService {
         });
     }
 
-    public List<LoanSchedule> calculateLoanSchedule(double loanAmount, int loanTerm) {
-
-        BigDecimal monthlyPayment = calculateLoan(loanAmount, loanTerm).setScale(2, RoundingMode.HALF_DOWN);
-
-        return IntStream.rangeClosed(1, loanTerm * 12)
-                .mapToObj(month -> new LoanSchedule(month, monthlyPayment))
-                .collect(toList());
-    }
-
     public void deleteClient(UUID clientId) {
         clientRepository.findById(clientId)
                 .orElseThrow(() -> new RuntimeException("Client with id " + clientId + " not found"))
@@ -93,7 +94,7 @@ public class ClientService {
 
     public RateDto getActualRate() throws URISyntaxException {
         RestTemplate template = new RestTemplate();
-        RateDto[] rateDtos = template.getForObject(new URI("http://api.nbp.pl/api/exchangerates/tables/a/"), RateDto[].class);
+        RateDto[] rateDtos = template.getForObject(new URI(uri), RateDto[].class);
 
         if (rateDtos ==  null) {
             return new RateDto("A", "000/A/NBP/0000", "0000-00-00", List.of());
@@ -111,7 +112,7 @@ public class ClientService {
     }
 
 
-    private static class ClientMapper {
+    public static class ClientMapper {
         public static Client mapToClient(ClientForm clientForm) {
             return new Client(clientForm.getName(), clientForm.getLastname(), clientForm.getPesel(), clientForm.getAge(), clientForm.getPhoneNumber(), AddressMapper.mapToAddress(clientForm.getAddress()));
         }
@@ -140,7 +141,7 @@ public class ClientService {
             return null;
         }
     }
-    private static class AddressMapper {
+    public static class AddressMapper {
         public static AddressDto mapToAdressDto(Address address) {
             if (address != null) {
                 return new AddressDto(address.getCity(), address.getStreet(), address.getBuildingNumber());

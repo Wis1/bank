@@ -70,7 +70,7 @@ public class ClientJsonController {
 
     @PostMapping("/calculateLoan")
     public List<ClientService.LoanSchedule> calculateLoan(@RequestParam double loanAmount, @RequestParam int loanTerm) {
-        return clientService.calculateLoanSchedule(loanAmount, loanTerm);
+        return clientService.calculateLoan(loanAmount, loanTerm);
     }
 
     @DeleteMapping("/{clientId}")

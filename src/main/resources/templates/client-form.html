@@ -9,7 +9,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 25vh;
+            height: 100vh;
             margin: 0;
             background-image: url('/css/image.jpg');
             background-size: cover;
@@ -30,7 +30,7 @@
         h1 {
             text-align: center;
             margin-bottom: 20px;
-            margin-top: 200px;
+            margin-top: 50px;
         }
 
         .menu-container {
@@ -45,8 +45,8 @@
         }
          .error {
             color: red !important;
-            margin-top: 10px;
-            margin-bottom: 10px;
+            margin-top: 5px;
+            margin-bottom: 5px;
         }
 
     </style>
@@ -58,14 +58,32 @@
   <label for="name">Name:</label><br>
   <input type="text" id="name" name="name"><br>
   <span id="nameError" class="error"></span><br>
+
   <label for="lastname">Lastname:</label><br>
   <input type="text" id="lastname" name="lastname"><br>
   <span id="lastnameError" class="error"></span><br>
+
   <label for="pesel">PESEL:</label><br>
   <input type="text" id="pesel" name="pesel" pattern="\d{11}" title="PESEL must contain 11 digits"><br><br>
   <span id="peselError" class="error"></span><br>
+
+  <label for="age">Age:</label><br>
+  <input type="number" id="age" name="age"><br><br>
+
+  <label for="phoneNumber">Phone Number:</label><br>
+  <input type="text" id="phoneNumber" name="phoneNumber"><br><br>
+
+  <label for="city">City:</label><br>
+  <input type="text" id="city" name="city"><br>
+
+  <label for="street">Street:</label><br>
+  <input type="text" id="street" name="street"><br>
+
+  <label for="buildingNumber">Building Number:</label><br>
+  <input type="number" id="buildingNumber" name="buildingNumber"><br><br>
+
   <input type="submit" value="Save"><br><br>
-  <button onclick="location.href='/client'">Display bank customers</button>
+  <button type="button" id="displayCustomersButton">Display bank customers</button>
 </form>
 
 
@@ -77,6 +95,11 @@ document.getElementById("clientForm").addEventListener("submit", function(event)
   var name = document.getElementById("name").value;
   var lastname = document.getElementById("lastname").value;
   var pesel = document.getElementById("pesel").value;
+  var age = document.getElementById("age").value;
+  var phoneNumber = document.getElementById("phoneNumber").value;
+  var city = document.getElementById("city").value;
+  var street = document.getElementById("street").value;
+  var buildingNumber = document.getElementById("buildingNumber").value;
   var peselError = document.getElementById("peselError");
 
    if (!document.getElementById("pesel").checkValidity()) {
@@ -89,7 +112,14 @@ document.getElementById("clientForm").addEventListener("submit", function(event)
   var clientData = {
     "name": name,
     "lastname": lastname,
-    "pesel": pesel
+    "pesel": pesel,
+    "age": age,
+    "phoneNumber": phoneNumber,
+     "address": {
+      "city": city,
+      "street": street,
+      "buildingNumber": buildingNumber
+    }
   };
 
   fetch("/client/new", {
@@ -105,6 +135,11 @@ document.getElementById("clientForm").addEventListener("submit", function(event)
       document.getElementById("name").value = "";
       document.getElementById("lastname").value = "";
       document.getElementById("pesel").value = "";
+      document.getElementById("age").value = "";
+      document.getElementById("phoneNumber").value = "";
+      document.getElementById("city").value = "";
+      document.getElementById("street").value = "";
+      document.getElementById("buildingNumber").value = "";
     } else {
       response.json().then(errors => {
         // Wyświetl komunikaty błędów obok odpowiednich pól formularza
@@ -130,6 +165,11 @@ document.getElementById("clientForm").addEventListener("submit", function(event)
     console.error("Error:", error);
   });
 });
+
+document.getElementById("displayCustomersButton").addEventListener("click", function() {
+  location.href = '/client';
+});
+
 </script>
 </body>
 </html>

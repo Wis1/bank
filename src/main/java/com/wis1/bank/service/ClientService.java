@@ -74,6 +74,9 @@ public class ClientService {
             client.setName(clientForm.getName());
             client.setLastname(clientForm.getLastname());
             client.setPesel(clientForm.getPesel());
+            client.setAge(clientForm.getAge());
+            client.setPhoneNumber(clientForm.getPhoneNumber());
+            client.setAddress(new Address(clientForm.getAddress().getCity(), clientForm.getAddress().getStreet(), clientForm.getAddress().getBuildingNumber()));
             clientRepository.save(client);
         });
     }

@@ -166,6 +166,26 @@
                 <span id="peselError" class="error"></span>
             </td>
         </tr>
+        <tr>
+            <th style="width: 273px;">Age:</th>
+            <td><span id="ageField" th:text="${client.age}" contenteditable="false"></span></td>
+        </tr>
+        <tr>
+            <th style="width: 273px;">Phone Number:</th>
+            <td><span id="phoneNumberField" th:text="${client.phoneNumber}" contenteditable="false"></span></td>
+        </tr>
+        <tr>
+            <th style="width: 273px;">City:</th>
+            <td><span id="cityField" th:text="${client.address.city}" contenteditable="false"></span></td>
+        </tr>
+        <tr>
+            <th style="width: 273px;">Street:</th>
+            <td><span id="streetField" th:text="${client.address.street}" contenteditable="false"></span></td>
+        </tr>
+        <tr>
+            <th style="width: 273px;">Building Number:</th>
+            <td><span id="buildingNumberField" th:text="${client.address.buildingNumber}" contenteditable="false"></span></td>
+        </tr>
     </table>
     <br><br>
     <button onclick="enableEdit()">Change customer details</button>
@@ -217,10 +237,16 @@
     <button onclick="location.href='/client/loanCalculator'">Calculate loan</button>
 
 <script>
+
     function enableEdit() {
         document.getElementById("nameField").contentEditable = true;
         document.getElementById("lastnameField").contentEditable = true;
         document.getElementById("peselField").contentEditable = true;
+        document.getElementById("ageField").contentEditable = true;
+        document.getElementById("phoneNumberField").contentEditable = true;
+        document.getElementById("cityField").contentEditable = true;
+        document.getElementById("streetField").contentEditable = true;
+        document.getElementById("buildingNumberField").contentEditable = true;
         document.getElementById("saveButton").style.display = "block";
     }
 
@@ -228,6 +254,11 @@
         var newName = document.getElementById("nameField").innerText;
         var newLastname = document.getElementById("lastnameField").innerText;
         var newPesel = document.getElementById("peselField").innerText;
+        var newAge = document.getElementById("ageField").innerText;
+        var newPhoneNumber = document.getElementById("phoneNumberField").innerText;
+        var newCity = document.getElementById("cityField").innerText;
+        var newStreet = document.getElementById("streetField").innerText;
+        var newBuildingNumber = document.getElementById("buildingNumberField").innerText;
 
        if (!newPesel.match(/^\d{11}$/)) {
         peselError.textContent = "PESEL must contain 11 digits.";
@@ -247,7 +278,14 @@
             body: JSON.stringify({
                 name: newName,
                 lastname: newLastname,
-                pesel: newPesel
+                pesel: newPesel,
+                age: newAge,
+                phoneNumber: newPhoneNumber,
+                address: {
+                    city: newCity,
+                    street: newStreet,
+                    buildingNumber: newBuildingNumber
+                }
             })
         })
         .then(response => {
@@ -256,11 +294,21 @@
                 document.getElementById("nameField").textContent = newName;
                 document.getElementById("lastnameField").textContent = newLastname;
                 document.getElementById("peselField").textContent = newPesel;
+                document.getElementById("ageField").textContent = newAge;
+                document.getElementById("phoneNumberField").textContent = newPhoneNumber;
+                document.getElementById("cityField").textContent = newCity;
+                document.getElementById("streetField").textContent = newStreet;
+                document.getElementById("buildingNumberField").textContent = newBuildingNumber;
 
                 // Disable editing after saving
                 document.getElementById("nameField").contentEditable = false;
                 document.getElementById("lastnameField").contentEditable = false;
                 document.getElementById("peselField").contentEditable = false;
+                document.getElementById("ageField").contentEditable = false;
+                document.getElementById("phoneNumberField").contentEditable = false;
+                document.getElementById("cityField").contentEditable = false;
+                document.getElementById("streetField").contentEditable = false;
+                document.getElementById("buildingNumberField").contentEditable = false;
 
                 alert('Customer details updated successfully.');
             } else {

@@ -61,6 +61,7 @@
     <div id="error"></div>
     <br>
     <input type="submit" value="Login">
+    <button type="button" id="signUpButton">Sign Up</button>
 </form>
 
 <div id="result"></div>
@@ -93,7 +94,12 @@
         });
     }
 
+    function redirectToSignUp() {
+        window.location.href = "http://localhost:8080/client/signup"; // Zmień URL na ten, który prowadzi do widoku rejestracji
+    }
+
     document.getElementById("loginForm").addEventListener("submit", login);
+    document.getElementById("signUpButton").addEventListener("click", redirectToSignUp);
 </script>
 </body>
 </html>

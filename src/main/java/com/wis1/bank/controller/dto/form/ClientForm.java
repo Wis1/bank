@@ -14,6 +14,7 @@ public class ClientForm {
     private String pesel;
     private short age;
     private String phoneNumber;
+    private String email;
     private AddressForm address;
 
 }

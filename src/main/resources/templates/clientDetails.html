@@ -51,8 +51,8 @@
         });
     }
 
-    function removeAccount(clientId) {
-     fetch('/account/client/' + clientId, {
+    function removeClient(clientId) {
+     fetch('/client/client/' + clientId, {
             method: 'DELETE'
         })
         .then(response => {
@@ -175,6 +175,10 @@
             <td><span id="phoneNumberField" th:text="${client.phoneNumber}" contenteditable="false"></span></td>
         </tr>
         <tr>
+            <th style="width: 273px;">E-mail:</th>
+            <td><span id="email" th:text="${client.email}" contenteditable="false"></span></td>
+        </tr>
+        <tr>
             <th style="width: 273px;">City:</th>
             <td><span id="cityField" th:text="${client.address.city}" contenteditable="false"></span></td>
         </tr>
@@ -233,7 +237,7 @@
 
     <h2>Operations:</h2>
     <button onclick="addAccount(clientId)">Add a bank account</button>
-    <button onclick="removeAccount(clientId)">Delete bank account</button>
+    <button onclick="removeClient(clientId)">Delete bank client</button>
     <button onclick="location.href='/client/loanCalculator'">Calculate loan</button>
 
 <script>
@@ -244,6 +248,7 @@
         document.getElementById("peselField").contentEditable = true;
         document.getElementById("ageField").contentEditable = true;
         document.getElementById("phoneNumberField").contentEditable = true;
+        document.getElementById("email").contentEditable = true;
         document.getElementById("cityField").contentEditable = true;
         document.getElementById("streetField").contentEditable = true;
         document.getElementById("buildingNumberField").contentEditable = true;
@@ -256,6 +261,7 @@
         var newPesel = document.getElementById("peselField").innerText;
         var newAge = document.getElementById("ageField").innerText;
         var newPhoneNumber = document.getElementById("phoneNumberField").innerText;
+        var newEmail = document.getElementById("email").innerText;
         var newCity = document.getElementById("cityField").innerText;
         var newStreet = document.getElementById("streetField").innerText;
         var newBuildingNumber = document.getElementById("buildingNumberField").innerText;
@@ -281,6 +287,7 @@
                 pesel: newPesel,
                 age: newAge,
                 phoneNumber: newPhoneNumber,
+                email: newEmail,
                 address: {
                     city: newCity,
                     street: newStreet,
@@ -296,6 +303,7 @@
                 document.getElementById("peselField").textContent = newPesel;
                 document.getElementById("ageField").textContent = newAge;
                 document.getElementById("phoneNumberField").textContent = newPhoneNumber;
+                document.getElementById("email").textContent = newEmail;
                 document.getElementById("cityField").textContent = newCity;
                 document.getElementById("streetField").textContent = newStreet;
                 document.getElementById("buildingNumberField").textContent = newBuildingNumber;
@@ -306,6 +314,7 @@
                 document.getElementById("peselField").contentEditable = false;
                 document.getElementById("ageField").contentEditable = false;
                 document.getElementById("phoneNumberField").contentEditable = false;
+                document.getElementById("email").contentEditable = false;
                 document.getElementById("cityField").contentEditable = false;
                 document.getElementById("streetField").contentEditable = false;
                 document.getElementById("buildingNumberField").contentEditable = false;

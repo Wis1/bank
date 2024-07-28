@@ -28,6 +28,7 @@ public class ClientService {
     private final ClientRepository clientRepository;
     private final AddressRepository addressRepository;
     private final String uri;
+    private final MailService mailService;
 
 
     public ClientDto createClient(ClientForm clientForm) {
@@ -114,14 +115,24 @@ public class ClientService {
                 .toList());
     }
 
+    public ClientDto registerNewClient(ClientForm clientForm) {
+        Client newClient = ClientMapper.mapToClient(clientForm);
+
+        Client savedClient = clientRepository.save(newClient);
+
+        mailService.sendVerificationEmail(savedClient.getEmail());
+
+        return ClientMapper.mapToClientDto(savedClient);
+    }
+
 
     public static class ClientMapper {
         public static Client mapToClient(ClientForm clientForm) {
-            return new Client(clientForm.getName(), clientForm.getLastname(), clientForm.getPesel(), clientForm.getAge(), clientForm.getPhoneNumber(), AddressMapper.mapToAddress(clientForm.getAddress()));
+            return new Client(clientForm.getName(), clientForm.getLastname(), clientForm.getPesel(), clientForm.getAge(), clientForm.getPhoneNumber(), clientForm.getEmail(), AddressMapper.mapToAddress(clientForm.getAddress()));
         }
 
         public static ClientDto mapToClientDto(Client client) {
-            return new ClientDto(client.getId(), client.getName(), client.getLastname(), client.getPesel(), client.getAge(), client.getPhoneNumber(), AddressMapper.mapToAdressDto(client.getAddress()), AccountMapper.mapToListAccountDto(client.getAccounts()));
+            return new ClientDto(client.getId(), client.getName(), client.getLastname(), client.getPesel(), client.getAge(), client.getPhoneNumber(), client.getEmail(), AddressMapper.mapToAdressDto(client.getAddress()), AccountMapper.mapToListAccountDto(client.getAccounts()));
         }
 
         public static List<ClientDto> mapToListClientDto(List<Client> clients) {

@@ -29,12 +29,12 @@ public class Client {
     private String lastname;
     @Column
     private String pesel;
-
     @Column
     private short age;
-
     @Column
     private String phoneNumber;
+    @Column
+    private String email;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id", referencedColumnName = "id")
@@ -52,12 +52,13 @@ public class Client {
         this.accounts = new ArrayList<>();
     }
 
-    public Client(String name, String lastname, String pesel, short age, String phoneNumber, Address address) {
+    public Client(String name, String lastname, String pesel, short age, String phoneNumber, String email, Address address) {
         this.name = name;
         this.lastname = lastname;
         this.pesel = pesel;
         this.age = age;
         this.phoneNumber = phoneNumber;
+        this.email = email;
         this.address = address;
     }
 }

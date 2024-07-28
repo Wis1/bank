@@ -29,10 +29,21 @@ public class ClientController {
         return "client-form";
     }
 
+    @GetMapping("/signup")
+    public String showSignUpForm() {return "signUpForm"; }
+
     @PostMapping(value = "/new")
     public ResponseEntity<String> createClient(@Valid @RequestBody ClientForm clientForm) {
         clientService.createClient(clientForm);
         return ResponseEntity.ok("Client has been added.");
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> registerUser(@RequestBody ClientForm clientForm) {
+
+        ClientDto client= clientService.registerNewClient(clientForm);
+
+        return ResponseEntity.ok("Registration successful");
     }
 
     @GetMapping()

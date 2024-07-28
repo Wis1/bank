@@ -5,6 +5,7 @@ import com.wis1.bank.repository.*;
 import com.wis1.bank.service.AccountService;
 import com.wis1.bank.service.ClientService;
 import com.wis1.bank.service.EmployeeService;
+import com.wis1.bank.service.MailService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,8 +24,8 @@ public class AppConfig {
     }
 
     @Bean
-    public ClientService clientService(ClientRepository clientRepository, AddressRepository addressRepository) {
-        return new ClientService(clientRepository, addressRepository, uri);
+    public ClientService clientService(ClientRepository clientRepository, AddressRepository addressRepository, MailService mailService) {
+        return new ClientService(clientRepository, addressRepository, uri, mailService);
     }
 
     @Bean

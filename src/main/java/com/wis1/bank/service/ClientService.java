@@ -3,6 +3,7 @@ package com.wis1.bank.service;
 import com.wis1.bank.controller.dto.*;
 import com.wis1.bank.controller.dto.form.AddressForm;
 import com.wis1.bank.controller.dto.form.ClientForm;
+import com.wis1.bank.exception.AuthenticationException;
 import com.wis1.bank.repository.entity.Account;
 import com.wis1.bank.repository.entity.Address;
 import com.wis1.bank.repository.entity.Client;
@@ -128,11 +129,11 @@ public class ClientService {
 
     public static class ClientMapper {
         public static Client mapToClient(ClientForm clientForm) {
-            return new Client(clientForm.getName(), clientForm.getLastname(), clientForm.getPesel(), clientForm.getAge(), clientForm.getPhoneNumber(), clientForm.getEmail(), AddressMapper.mapToAddress(clientForm.getAddress()));
+            return new Client(clientForm.getName(), clientForm.getLastname(), clientForm.getLogin(), clientForm.getPesel(), clientForm.getAge(), clientForm.getPhoneNumber(), clientForm.getEmail(), clientForm.getPassword(), AddressMapper.mapToAddress(clientForm.getAddress()));
         }
 
         public static ClientDto mapToClientDto(Client client) {
-            return new ClientDto(client.getId(), client.getName(), client.getLastname(), client.getPesel(), client.getAge(), client.getPhoneNumber(), client.getEmail(), AddressMapper.mapToAdressDto(client.getAddress()), AccountMapper.mapToListAccountDto(client.getAccounts()));
+            return new ClientDto(client.getId(), client.getName(), client.getLastname(), client.getLogin(), client.getPesel(), client.getAge(), client.getPhoneNumber(), client.getEmail(), client.getPassword(), AddressMapper.mapToAdressDto(client.getAddress()), AccountMapper.mapToListAccountDto(client.getAccounts()));
         }
 
         public static List<ClientDto> mapToListClientDto(List<Client> clients) {
@@ -168,6 +169,18 @@ public class ClientService {
     }
 
     public record LoanSchedule(int month, BigDecimal monthlyPayment) {
+    }
+
+    public ClientDto findByLoginAndAuthenticate(String login, String password) {
+//
+        ClientSearch clientSearch = new ClientSearch();
+        clientSearch.setLogin(login);
+
+        return filterByCriteria(clientSearch, 0, 1, "login")
+                .stream()
+                .findFirst()
+                .filter(clientDto -> clientDto.password().equals(password))
+                .orElseThrow(() -> new AuthenticationException("Login or password is wrong."));
     }
 
     public Page<ClientDto> filterByCriteria(ClientSearch clientSearch, final Integer pageNo, final Integer pageSize, final String sortBy) {

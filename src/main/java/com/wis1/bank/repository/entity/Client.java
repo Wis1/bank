@@ -27,6 +27,10 @@ public class Client {
     private String name;
     @Column
     private String lastname;
+    @Column(unique = true)
+    private String login;
+    @Column
+    private Role role;
     @Column
     private String pesel;
     @Column
@@ -35,6 +39,8 @@ public class Client {
     private String phoneNumber;
     @Column
     private String email;
+    @Column
+    private String password;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "address_id", referencedColumnName = "id")
@@ -48,17 +54,21 @@ public class Client {
     public Client(String name, String lastname, String pesel) {
         this.name = name;
         this.lastname = lastname;
+        this.role = Role.CLIENT;
         this.pesel = pesel;
         this.accounts = new ArrayList<>();
     }
 
-    public Client(String name, String lastname, String pesel, short age, String phoneNumber, String email, Address address) {
+    public Client(String name, String lastname, String login, String pesel, short age, String phoneNumber, String email, String password, Address address) {
         this.name = name;
         this.lastname = lastname;
+        this.login = login;
+        this.role = Role.CLIENT;
         this.pesel = pesel;
         this.age = age;
         this.phoneNumber = phoneNumber;
         this.email = email;
+        this.password= password;
         this.address = address;
     }
 }

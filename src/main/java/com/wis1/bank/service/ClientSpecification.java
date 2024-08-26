@@ -32,6 +32,9 @@ public class ClientSpecification implements Specification<Client> {
         if (!ObjectUtils.isEmpty(clientSearch.getLastname())) {
             predicates.add(criteriaBuilder.like(root.get(Client.Fields.lastname), "%" + clientSearch.getLastname().toLowerCase() + "%"));
         }
+        if (!ObjectUtils.isEmpty(clientSearch.getLogin())) {
+            predicates.add(criteriaBuilder.like(root.get(Client.Fields.login), "%" + clientSearch.getLogin() + "%"));
+        }
         if (!ObjectUtils.isEmpty(clientSearch.getPesel())) {
             predicates.add(criteriaBuilder.like(root.get(Client.Fields.pesel), "%" + clientSearch.getPesel().toLowerCase() + "%"));
         }

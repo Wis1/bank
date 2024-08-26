@@ -41,9 +41,7 @@ public class ClientController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody ClientForm clientForm) {
 
-        ClientDto client= clientService.registerNewClient(clientForm);
-
-        return ResponseEntity.ok("Registration successful");
+        return ResponseEntity.ok().body(clientService.registerNewClient(clientForm));
     }
 
     @GetMapping()

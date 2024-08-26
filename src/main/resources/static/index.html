@@ -45,7 +45,7 @@
 
         button {
             margin-bottom: 10px;
-            width: 200px;
+            width: 125px;
         }
 
     </style>
@@ -76,16 +76,19 @@
         })
        .then(response => {
             if (response.ok) {
-                window.location.href = "http://localhost:8080/employee/menu";
+               return response.json();
             } else {
-                return response.text();
+               throw new Error("Log in is not success.");
             }
         })
         .then(data => {
-            if(data) {
-             document.getElementById("error").innerText = data;
+            if(data.role === 'EMPLOYEE') {
+                window.location.href = "http://localhost:8080/employee/menu";
+             } else if (data.role === 'CLIENT'){
+                var clientId = data.clientData.id;
+                window.location.href = `http://localhost:8080/client/${clientId}`;
              } else {
-             document.getElementById("error").innerText = "";
+                throw new Error('Invalid role received');
              }
         })
         .catch(error => {
@@ -95,7 +98,7 @@
     }
 
     function redirectToSignUp() {
-        window.location.href = "http://localhost:8080/client/signup"; // Zmień URL na ten, który prowadzi do widoku rejestracji
+        window.location.href = "http://localhost:8080/client/signup";
     }
 
     document.getElementById("loginForm").addEventListener("submit", login);

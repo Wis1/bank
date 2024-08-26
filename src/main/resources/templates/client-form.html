@@ -63,6 +63,10 @@
   <input type="text" id="lastname" name="lastname"><br>
   <span id="lastnameError" class="error"></span><br>
 
+  <label for="login">Login:</label><br>
+  <input type="text" id="login" name="lastname"><br>
+  <span id="loginError" class="error"></span><br>
+
   <label for="pesel">PESEL:</label><br>
   <input type="text" id="pesel" name="pesel" pattern="\d{11}" title="PESEL must contain 11 digits"><br><br>
   <span id="peselError" class="error"></span><br>
@@ -94,6 +98,7 @@ document.getElementById("clientForm").addEventListener("submit", function(event)
 
   var name = document.getElementById("name").value;
   var lastname = document.getElementById("lastname").value;
+  var login = document.getElementById("login").value;
   var pesel = document.getElementById("pesel").value;
   var age = document.getElementById("age").value;
   var phoneNumber = document.getElementById("phoneNumber").value;
@@ -112,6 +117,7 @@ document.getElementById("clientForm").addEventListener("submit", function(event)
   var clientData = {
     "name": name,
     "lastname": lastname,
+    "login": login,
     "pesel": pesel,
     "age": age,
     "phoneNumber": phoneNumber,
@@ -134,6 +140,7 @@ document.getElementById("clientForm").addEventListener("submit", function(event)
       alert("Client has been added successfully.");
       document.getElementById("name").value = "";
       document.getElementById("lastname").value = "";
+      document.getElementById("login").value = "";
       document.getElementById("pesel").value = "";
       document.getElementById("age").value = "";
       document.getElementById("phoneNumber").value = "";
@@ -152,6 +159,11 @@ document.getElementById("clientForm").addEventListener("submit", function(event)
           document.getElementById("lastnameError").textContent = errors.lastname;
         } else {
           document.getElementById("lastnameError").textContent = "";
+        }
+        if (errors.login) {
+          document.getElementById("loginError").textContent = errors.login;
+        } else {
+          document.getElementById("loginError").textContent = "";
         }
         if (errors.pesel) {
           document.getElementById("peselError").textContent = errors.pesel;

@@ -160,6 +160,10 @@
             <td><span id="lastnameField" th:text="${client.lastname}" contenteditable="false"></span></td>
         </tr>
         <tr>
+            <th style="width: 273px;">Login:</th>
+            <td><span id="loginField" th:text="${client.login}" contenteditable="false"></span></td>
+        </tr>
+        <tr>
             <th style="width: 273px;">PESEL:</th>
             <td>
                 <span id="peselField" th:text="${client.pesel}" contenteditable="false"></span>
@@ -245,6 +249,7 @@
     function enableEdit() {
         document.getElementById("nameField").contentEditable = true;
         document.getElementById("lastnameField").contentEditable = true;
+        document.getElementById("loginField").contentEditable = true;
         document.getElementById("peselField").contentEditable = true;
         document.getElementById("ageField").contentEditable = true;
         document.getElementById("phoneNumberField").contentEditable = true;
@@ -258,6 +263,7 @@
     function saveChanges() {
         var newName = document.getElementById("nameField").innerText;
         var newLastname = document.getElementById("lastnameField").innerText;
+        var newLogin = document.getElementById("loginField").innerText;
         var newPesel = document.getElementById("peselField").innerText;
         var newAge = document.getElementById("ageField").innerText;
         var newPhoneNumber = document.getElementById("phoneNumberField").innerText;
@@ -284,6 +290,7 @@
             body: JSON.stringify({
                 name: newName,
                 lastname: newLastname,
+                login: newLogin,
                 pesel: newPesel,
                 age: newAge,
                 phoneNumber: newPhoneNumber,
@@ -300,6 +307,7 @@
                 // Update client details on the page
                 document.getElementById("nameField").textContent = newName;
                 document.getElementById("lastnameField").textContent = newLastname;
+                document.getElementById("loginField").textContent = newLogin;
                 document.getElementById("peselField").textContent = newPesel;
                 document.getElementById("ageField").textContent = newAge;
                 document.getElementById("phoneNumberField").textContent = newPhoneNumber;
@@ -311,6 +319,7 @@
                 // Disable editing after saving
                 document.getElementById("nameField").contentEditable = false;
                 document.getElementById("lastnameField").contentEditable = false;
+                document.getElementById("loginField").contentEditable = false;
                 document.getElementById("peselField").contentEditable = false;
                 document.getElementById("ageField").contentEditable = false;
                 document.getElementById("phoneNumberField").contentEditable = false;

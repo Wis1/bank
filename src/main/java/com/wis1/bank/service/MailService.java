@@ -15,7 +15,7 @@ public class MailService {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(recipientEmail);
         mailMessage.setSubject("Email Verification");
-        mailMessage.setText("Witaj! Kliknij tutaj, aby zweryfikować swoje konto: http://twojaaplikacja.com/verify-email");
+        mailMessage.setText("Hello! Click here to verify your account and login: http://localhost/8080");
 
         javaMailSender.send(mailMessage);
     }

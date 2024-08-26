@@ -22,9 +22,12 @@ public class Employee {
     private String username;
     @Column
     private String password;
+    @Column
+    private Role role;
 
     public Employee(String username, String password) {
         this.username = username;
         this.password = password;
+        this.role= Role.EMPLOYEE;
     }
 }

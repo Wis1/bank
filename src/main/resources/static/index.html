@@ -70,7 +70,7 @@
      function login(event) {
         event.preventDefault();
         var formData = new FormData(document.getElementById("loginForm"));
-        fetch('/employee/login', {
+        fetch('/login/login', {
             method: 'POST',
             body: formData
         })

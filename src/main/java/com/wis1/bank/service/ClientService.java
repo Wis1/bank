@@ -75,6 +75,7 @@ public class ClientService {
         optionalClient.ifPresent(client -> {
             client.setName(clientForm.getName());
             client.setLastname(clientForm.getLastname());
+            client.setLogin(clientForm.getLogin());
             client.setPesel(clientForm.getPesel());
             client.setAge(clientForm.getAge());
             client.setPhoneNumber(clientForm.getPhoneNumber());

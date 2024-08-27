@@ -39,3 +39,9 @@ td .error {
      color: red !important;
 }
 
+ .editable {
+            border: 2px solid #ccc; /* Ramka dla edytowalnych pól */
+            padding: 5px;
+            display: inline-block; /* Aby zachować wysokość pola */
+        }
+

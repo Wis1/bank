@@ -258,9 +258,33 @@
         document.getElementById("streetField").contentEditable = true;
         document.getElementById("buildingNumberField").contentEditable = true;
         document.getElementById("saveButton").style.display = "block";
+
+        document.getElementById("nameField").classList.add("editable");
+        document.getElementById("lastnameField").classList.add("editable");
+        document.getElementById("loginField").classList.add("editable");
+        document.getElementById("peselField").classList.add("editable");
+        document.getElementById("ageField").classList.add("editable");
+        document.getElementById("phoneNumberField").classList.add("editable");
+        document.getElementById("email").classList.add("editable");
+        document.getElementById("cityField").classList.add("editable");
+        document.getElementById("streetField").classList.add("editable");
+        document.getElementById("buildingNumberField").classList.add("editable");
+        document.getElementById("saveButton").style.display = "block";
     }
 
     function saveChanges() {
+
+        document.getElementById("nameField").classList.remove("editable");
+        document.getElementById("lastnameField").classList.remove("editable");
+        document.getElementById("loginField").classList.remove("editable");
+        document.getElementById("peselField").classList.remove("editable");
+        document.getElementById("ageField").classList.remove("editable");
+        document.getElementById("phoneNumberField").classList.remove("editable");
+        document.getElementById("email").classList.remove("editable");
+        document.getElementById("cityField").classList.remove("editable");
+        document.getElementById("streetField").classList.remove("editable");
+        document.getElementById("buildingNumberField").classList.remove("editable");
+
         var newName = document.getElementById("nameField").innerText;
         var newLastname = document.getElementById("lastnameField").innerText;
         var newLogin = document.getElementById("loginField").innerText;

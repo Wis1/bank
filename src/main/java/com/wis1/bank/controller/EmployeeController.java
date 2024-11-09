@@ -32,16 +32,13 @@ public class EmployeeController {
     public ResponseEntity<?> searchClients(
             @RequestParam(value = "q", required = false) String searchWord,
             @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value= "size", defaultValue = "10") int size
+            @RequestParam(value = "size", defaultValue = "10") int size
     ) {
-
-        if (searchWord == null || searchWord.isEmpty()) {
-            return ResponseEntity.ok(clientService.getAllClient());
-        } else {
-            ClientSearch clientSearch = new ClientSearch();
+        ClientSearch clientSearch = new ClientSearch();
+        if (searchWord != null) {
             clientSearch.setLastname(searchWord);
-            return ResponseEntity.ok(clientService.filterByCriteria(clientSearch, 0, 30, "lastname"));
         }
+        return ResponseEntity.ok(clientService.filterByCriteria(clientSearch, page, size, "lastname"));
     }
 
     @PostMapping("/register")

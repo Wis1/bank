@@ -65,14 +65,17 @@
 
 <script>
 
+    let currentPage = 0;
+    const pageSize = 10;
+
     function searchClients() {
         var query = document.getElementById('search-input').value;
 
-        fetch('/employee/search?q=' + encodeURIComponent(query))
+                fetch(`/employee/search?q=${encodeURIComponent(query)}&page=${currentPage}&size=${pageSize}`)
             .then(response => response.json())
             .then(data => {
                 var tbody = document.getElementById('clientsTableBody');
-                tbody.innerHTML = ''; // Clear the table body
+                tbody.innerHTML = '';
 
                 data.content.forEach(client => {
                     var row = document.createElement('tr');
@@ -89,12 +92,18 @@
                     tbody.appendChild(row);
                 });
                 document.getElementById('current-page').textContent = `Page ${data.number + 1} of ${data.totalPages}`;
+                document.querySelector("button[onclick='previousPage()']").disabled = data.number === 0;
+                document.querySelector("button[onclick='nextPage()']").disabled = data.number + 1 >= data.totalPages;
             })
-            .catch(error => console.error('Error fetching client data:', error));
+            .catch(error => {
+                console.error('Error fetching client data:', error);
+                const tbody = document.getElementById('clientsTableBody');
+                tbody.innerHTML = '<tr><td colspan="4">Error fetching client data.</td></tr>';
+            });
     }
 
     window.onload = function() {
-        searchClients();  // Call searchClients() on page load to display all clients
+        searchClients();
     };
 
     function showClientDetails(row) {

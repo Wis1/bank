@@ -1,7 +1,9 @@
 package com.wis1.bank.controller;
 
+import com.wis1.bank.controller.dto.ClientSearch;
 import com.wis1.bank.controller.dto.form.EmployeeForm;
 import com.wis1.bank.repository.entity.Employee;
+import com.wis1.bank.service.ClientService;
 import com.wis1.bank.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,10 +21,27 @@ import java.util.UUID;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
+    private final ClientService clientService;
 
     @GetMapping("/menu")
     public String menu() {
         return "menu";
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchClients(
+            @RequestParam(value = "q", required = false) String searchWord,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value= "size", defaultValue = "10") int size
+    ) {
+
+        if (searchWord == null || searchWord.isEmpty()) {
+            return ResponseEntity.ok(clientService.getAllClient());
+        } else {
+            ClientSearch clientSearch = new ClientSearch();
+            clientSearch.setLastname(searchWord);
+            return ResponseEntity.ok(clientService.filterByCriteria(clientSearch, 0, 30, "lastname"));
+        }
     }
 
     @PostMapping("/register")

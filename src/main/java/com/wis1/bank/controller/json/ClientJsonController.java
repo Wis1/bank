@@ -6,6 +6,7 @@ import com.wis1.bank.controller.dto.form.ClientForm;
 import com.wis1.bank.service.ClientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -41,7 +42,7 @@ public class ClientJsonController {
     }
 
     @GetMapping("/all")
-    public List<ClientDto> getAllClients() {
+    public Page<ClientDto> getAllClients() {
         return clientService.getAllClient();
     }
 

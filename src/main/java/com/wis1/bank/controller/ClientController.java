@@ -6,6 +6,7 @@ import com.wis1.bank.controller.dto.form.ClientForm;
 import com.wis1.bank.service.ClientService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,7 +14,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URISyntaxException;
-import java.util.List;
 import java.util.UUID;
 
 @Controller
@@ -46,7 +46,7 @@ public class ClientController {
 
     @GetMapping()
     public String getAllClients(Model model) {
-        List<ClientDto> clients = clientService.getAllClient();
+        Page<ClientDto> clients = clientService.getAllClient();
         model.addAttribute("clients", clients);
         return "clients";
     }

@@ -37,8 +37,8 @@ public class ClientService {
         return ClientMapper.mapToClientDto(clientRepository.save(ClientMapper.mapToClient(clientForm)));
     }
 
-    public List<ClientDto> getAllClient() {
-        return ClientMapper.mapToListClientDto(clientRepository.findAll());
+    public Page<ClientDto> getAllClient() {
+        return filterByCriteria(new ClientSearch(),0,30,"lastname");
     }
 
     public List<LoanSchedule> calculateLoan(double loanAmount, int loanTerm) {
@@ -79,6 +79,7 @@ public class ClientService {
             client.setPesel(clientForm.getPesel());
             client.setAge(clientForm.getAge());
             client.setPhoneNumber(clientForm.getPhoneNumber());
+            client.setEmail(clientForm.getEmail());
             client.setAddress(new Address(clientForm.getAddress().getCity(), clientForm.getAddress().getStreet(), clientForm.getAddress().getBuildingNumber()));
             clientRepository.save(client);
         });

@@ -38,7 +38,7 @@ public class ClientService {
     }
 
     public Page<ClientDto> getAllClient() {
-        return filterByCriteria(new ClientSearch(),0,30,"lastname");
+        return filterByCriteria("",0,10,"lastname");
     }
 
     public List<LoanSchedule> calculateLoan(double loanAmount, int loanTerm) {
@@ -178,16 +178,16 @@ public class ClientService {
         ClientSearch clientSearch = new ClientSearch();
         clientSearch.setLogin(login);
 
-        return filterByCriteria(clientSearch, 0, 1, "login")
+        return filterByCriteria(login, 0, 1, "login")
                 .stream()
                 .findFirst()
                 .filter(clientDto -> clientDto.password().equals(password))
                 .orElseThrow(() -> new AuthenticationException("Login or password is wrong."));
     }
 
-    public Page<ClientDto> filterByCriteria(ClientSearch clientSearch, final Integer pageNo, final Integer pageSize, final String sortBy) {
+    public Page<ClientDto> filterByCriteria(String searchPhrase, final Integer pageNo, final Integer pageSize, final String sortBy) {
         Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-        Specification<Client> specification = new ClientSpecification(clientSearch);
+        Specification<Client> specification = new ClientSpecification(searchPhrase);
         Page<Client> page = clientRepository.findAll(specification, paging);
         return page.map(ClientMapper::mapToClientDto);
     }

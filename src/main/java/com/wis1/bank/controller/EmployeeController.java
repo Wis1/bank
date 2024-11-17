@@ -1,6 +1,5 @@
 package com.wis1.bank.controller;
 
-import com.wis1.bank.controller.dto.ClientSearch;
 import com.wis1.bank.controller.dto.form.EmployeeForm;
 import com.wis1.bank.repository.entity.Employee;
 import com.wis1.bank.service.ClientService;
@@ -34,11 +33,7 @@ public class EmployeeController {
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size
     ) {
-        ClientSearch clientSearch = new ClientSearch();
-        if (searchWord != null) {
-            clientSearch.setLastname(searchWord);
-        }
-        return ResponseEntity.ok(clientService.filterByCriteria(clientSearch, page, size, "lastname"));
+        return ResponseEntity.ok(clientService.filterByCriteria(searchWord, page, size, "lastname"));
     }
 
     @PostMapping("/register")

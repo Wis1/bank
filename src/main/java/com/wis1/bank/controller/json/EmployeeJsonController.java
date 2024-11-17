@@ -2,7 +2,6 @@ package com.wis1.bank.controller.json;
 
 import com.wis1.bank.controller.GenericValidator;
 import com.wis1.bank.controller.dto.ClientDto;
-import com.wis1.bank.controller.dto.ClientSearch;
 import com.wis1.bank.controller.dto.form.EmployeeForm;
 import com.wis1.bank.repository.entity.Employee;
 import com.wis1.bank.service.ClientService;
@@ -34,11 +33,11 @@ public class EmployeeJsonController {
     }
 
     @GetMapping
-    public Page<ClientDto> filterClientByCriteria(ClientSearch clientSearch,
+    public Page<ClientDto> filterClientByCriteria(String searchPhrase,
                                                   @RequestParam(required = false, defaultValue = "0") Integer pageNo,
                                                   @RequestParam(required = false, defaultValue = "10") Integer pageSize,
                                                   @RequestParam(required = false, defaultValue = "lastname") String sortBy) {
-        return clientService.filterByCriteria(clientSearch, pageNo, pageSize, sortBy);
+        return clientService.filterByCriteria(searchPhrase, pageNo, pageSize, sortBy);
     }
 
     @PostMapping("/register")

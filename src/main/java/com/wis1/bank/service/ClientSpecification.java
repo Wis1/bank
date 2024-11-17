@@ -1,24 +1,19 @@
 package com.wis1.bank.service;
 
-import com.wis1.bank.controller.dto.ClientSearch;
 import com.wis1.bank.repository.entity.Address;
 import com.wis1.bank.repository.entity.Client;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.util.ObjectUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class ClientSpecification implements Specification<Client> {
 
-    public ClientSearch clientSearch;
+    private final String searchPhrase;
 
-    public ClientSpecification(final ClientSearch clientSearch) {
-        this.clientSearch= clientSearch;
+    public ClientSpecification(String searchPhrase) {
+        this.searchPhrase = searchPhrase != null ? searchPhrase.toLowerCase() : "";
     }
 
     @Override
@@ -26,31 +21,37 @@ public class ClientSpecification implements Specification<Client> {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        if (!ObjectUtils.isEmpty(clientSearch.getName())) {
-            predicates.add(criteriaBuilder.like(root.get(Client.Fields.name), "%" + clientSearch.getName().toLowerCase() + "%"));
+        if (searchPhrase.isEmpty()) {
+            return criteriaBuilder.conjunction();
+        } else {
+
+            Expression<String> uuidAsString = criteriaBuilder.function("CAST", String.class, root.get("id"), criteriaBuilder.literal("CHAR"));
+
+            predicates.add(criteriaBuilder.like(
+                    criteriaBuilder.lower(root.get(Client.Fields.name)), "%" + searchPhrase + "%"
+            ));
+            predicates.add(criteriaBuilder.like(
+                    criteriaBuilder.lower(root.get(Client.Fields.lastname)), "%" + searchPhrase + "%"
+            ));
+            predicates.add(criteriaBuilder.like(
+                    criteriaBuilder.lower(root.get(Client.Fields.login)), "%" + searchPhrase + "%"
+            ));
+
+            predicates.add(criteriaBuilder.like(
+                    criteriaBuilder.lower(root.get(Client.Fields.pesel)), "%" + searchPhrase + "%"
+            ));
+
+//            predicates.add(criteriaBuilder.like(
+//                    criteriaBuilder.lower(uuidAsString), "%" + searchPhrase + "%"
+//            ));
+
+            predicates.add(criteriaBuilder.like(
+                    criteriaBuilder.lower(root.get(Client.Fields.address).get(Address.Fields.city)), "%" + searchPhrase + "%"
+            ));
+            predicates.add(criteriaBuilder.like(
+                    criteriaBuilder.lower(root.get(Client.Fields.address).get(Address.Fields.street)), "%" + searchPhrase + "%"
+            ));
         }
-        if (!ObjectUtils.isEmpty(clientSearch.getLastname())) {
-            predicates.add(criteriaBuilder.like(root.get(Client.Fields.lastname), "%" + clientSearch.getLastname().toLowerCase() + "%"));
-        }
-        if (!ObjectUtils.isEmpty(clientSearch.getLogin())) {
-            predicates.add(criteriaBuilder.like(root.get(Client.Fields.login), "%" + clientSearch.getLogin() + "%"));
-        }
-        if (!ObjectUtils.isEmpty(clientSearch.getPesel())) {
-            predicates.add(criteriaBuilder.like(root.get(Client.Fields.pesel), "%" + clientSearch.getPesel().toLowerCase() + "%"));
-        }
-        if (!ObjectUtils.isEmpty(clientSearch.getAge())) {
-            predicates.add(criteriaBuilder.equal(root.get(Client.Fields.age), clientSearch.getAge()));
-        }
-        if (!ObjectUtils.isEmpty(clientSearch.getAddress())) {
-            if (!ObjectUtils.isEmpty(clientSearch.getAddress().getCity())) {
-                String cityPattern = "%" + clientSearch.getAddress().getCity().toLowerCase() + "%";
-                predicates.add(criteriaBuilder.like(root.get(Client.Fields.address).get(Address.Fields.city), cityPattern));
-            }
-            if (!ObjectUtils.isEmpty(clientSearch.getAddress().getStreet())) {
-                String cityPattern =  "%" + clientSearch.getAddress().getStreet().toLowerCase() + "%";
-                predicates.add(criteriaBuilder.like(root.get(Client.Fields.address).get(Address.Fields.street), cityPattern));
-            }
-        }
-        return criteriaBuilder.and(predicates.toArray(Predicate[]::new));
+        return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
     }
 }
